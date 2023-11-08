@@ -1,6 +1,6 @@
 var Radio = {
     check: function(){
-        console.log("Radio Ready!")
+        console.log("One piece c'est trop bien!")
         return true 
     }
 }
