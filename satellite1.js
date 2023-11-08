@@ -1,6 +1,7 @@
 var Satellite1 = {
 check: function(){
-console.log("Satellite1 Ready !")
+console.log("Satellite Ready !")
+console.log("Lisez Detective Conan !")
 return true
 }
 }
