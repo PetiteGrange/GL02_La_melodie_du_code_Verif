@@ -1,5 +1,5 @@
 var Satellite1 = {
-    check: function(){
+    check: function() {
         console.log("Satellite2 Ready !")
         return true
     }
