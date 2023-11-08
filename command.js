@@ -1,7 +1,7 @@
 var Engine = {
 	check: function(){
-		console.log("Engine Ready !")
+		console.log("command Ready !")
 		return true
 	}
-}
-module.exports = Engine
+}mm
+module.exports = command
