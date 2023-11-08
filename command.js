@@ -3,5 +3,5 @@ var Engine = {
 		console.log("command Ready !")
 		return true
 	}
-}mm
-module.exports = command
+}
+module.exports = Engine
