@@ -5,3 +5,5 @@ var Satellite1 = {
     }
 }
 module.exports = Satellite1
+console.log("Grey level checked".grey);
+

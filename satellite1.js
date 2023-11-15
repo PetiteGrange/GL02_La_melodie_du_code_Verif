@@ -1,8 +1,8 @@
-var satellite1 = {
+var Satellite1 = {
     check: function() {
-        console.log("Satellite Ready !")
-        console.log("Lisez Detective Conan !")
+        console.log("Satellite2 Ready !")
         return true
     }
 }
-module.exports = satellite1
+module.exports = Satellite1
+console.log("Grey level checked".grey);
