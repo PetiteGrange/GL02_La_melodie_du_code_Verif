@@ -1,10 +1,9 @@
 var Engine = {
     check: function() {
         console.log("Engine Ready !");
-        return true;
+        console.log("grey level checked".grey);
+	    return true;
     }
 }
 
-module.exports = Engine;
-console.log("grey level checked".grey);
-
+module.exports = Engine
