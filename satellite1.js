@@ -3,6 +3,8 @@ var satellite1 = {
         console.log("Satellite Ready !")
         console.log("Magenta level checked".magenta)
 
+        console.log("Lisez Detective Conan !")
+	console.log("Blue level checked !".blue)
         return true
     }
 }
