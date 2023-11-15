@@ -8,4 +8,3 @@ var Radio = {
 }
 
 module.exports = Radio;
-console.log("grey level checked"grey);
