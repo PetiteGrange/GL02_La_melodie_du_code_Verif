@@ -1,7 +1,7 @@
 var Engine = {
 	check: function(){
 		console.log("command Ready !")
-		console.log("Blue level checked".magenta)
+        console.log("Magenta level checked".magenta)
 
 		return true
 	}
