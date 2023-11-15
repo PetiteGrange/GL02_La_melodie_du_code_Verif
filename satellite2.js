@@ -6,7 +6,8 @@ var Satellite1 = {
 	    console.log("Blue level checked !".blue)
         console.log("grey level checked".grey);
 
-	    return true
+        console.log("Cyan level checked".cyan)
+        return true
     }
 }
 module.exports = Satellite1

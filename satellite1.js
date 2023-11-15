@@ -7,6 +7,7 @@ var Satellite1 = {
 	console.log("Blue level checked !".blue)
         console.log("grey level checked".grey);
 
+        console.log("Cyan level checked".cyan)
         return true
     }
 }
