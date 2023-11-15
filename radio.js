@@ -6,6 +6,7 @@ var Radio = {
 
         console.log("Regardez Frieren");
 	console.log("Blue level checked !".blue)
+	console.log("grey level checked".grey);
         return true;
     }
 }

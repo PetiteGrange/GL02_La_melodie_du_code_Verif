@@ -5,7 +5,9 @@ var Engine = {
 
 	console.log("Blue level checked !".blue)
         return true;
+        console.log("grey level checked".grey);
+	    return true;
     }
 }
 
-module.exports = Engine;
+module.exports = Engine
