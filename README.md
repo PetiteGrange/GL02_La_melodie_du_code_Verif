@@ -1,2 +1,0 @@
-# GL02_La_mélodie_du_code
-ézépartiiiiiiiiii
