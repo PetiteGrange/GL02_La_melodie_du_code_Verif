@@ -41,35 +41,48 @@ class Question {
 
     check(testAns) {
         switch (this.type) {
+            // testAns = Boolean
+            // this.answer = Boolean
             case QuestionType.VF:
                 return this.answer == testAns ? 1 : 0
 
+            // testAns = [String]
+            // this.answer = [{"text": String, "value": float}]
             case QuestionType.QCU:
-                if (!this.partialCredit) {
-                    return this.answer == testAns ? 1 : 0
-                }
                 this.answer.forEach(ans => {
-                    if (testAns = ans["text"]) {
+                    if (testAns == ans["text"]) {
                         return ans["value"]
                     }
-                })
+                });
                 return .0
 
+            // testAns = [String]
+            // this.answer = [{"text": String, "value": float}]
             case QuestionType.QCM:
-                // TODO
-                break;
+                var score = .0
+                testAns.array.forEach(testA => {
+                    this.answer.array.forEach(ans => {
+                        if (ans["text"] == testA) {
+                            score += ans["value"]
+                        }
+                    });
+                });
+                return score
 
+            // testAns = {"Question1": "Réponse1", "Question2": "Réponse2"}
+            // this.answer = {"Question1": "Réponse1", "Question2": "Réponse2"}
             case QuestionType.ASSO:
-                // TODO
-                break;
-
-            case QuestionType.NUM_E:
-                if (!this.partialCredit) {
-                    var min = this.answer["target"] - this.answer["range"]
-                    var max = this.answer["target"] + this.answer["range"]
-                    return testAns >= min && testAns <= max ? 1 : 0
+                var matches = .0
+                var count = .0
+                for (var key in testAns) {
+                    count += 1
+                    matches += testAns[key] == this.answer[key] ? 1 : -1
                 }
+                return matches / count
 
+            // testAns = float
+            // this.answer = [{"target": float, "range": float", "value": float}]
+            case QuestionType.NUM_E:
                 this.answer.array.forEach(ans => {
                     var min = ans["target"] - ans["range"]
                     var max = ans["target"] + ans["range"]
@@ -79,11 +92,9 @@ class Question {
                 });
                 return .0
 
+            // testAns = float
+            // this.answer = [{"min": float, "max": float, "value": float}]
             case QuestionType.NUM_R:
-                if (!this.partialCredit) {
-                    return testAns >= this.answer["min"] && testAns <= this.answer["max"] ? 1 : 0
-                }
-
                 this.answer.array.forEach(ans => {
                     if (testAns >= ans["min"] && testAns <= ans["max"]) {
                         return ans["value"]
