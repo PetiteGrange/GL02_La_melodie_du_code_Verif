@@ -167,7 +167,7 @@ class GiftParser {
                         feedback = ans.split('#')[1].trim()
                     } else { feedback = ""}
 
-                    
+
                     if (!partialCredit) {
 
                     } else {

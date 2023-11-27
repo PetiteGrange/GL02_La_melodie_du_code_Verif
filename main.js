@@ -28,4 +28,40 @@ program
         logger.info("Hello World!".green)
     })
 
+    .command('check', 'check')
+    .argument('<file>', 'The file to check')
+    .option('-t, --showTokenize', 'log the tokenization results', { validator: program.BOOLEAN, default: false })
+    .action(({args, options, logger}) => {
+        fs.readFile(args.file, 'utf8', function (err,data) {
+			if (err) {
+				return logger.warn(err);
+			}
+	  
+			var analyzer = new GiftParser(options.showTokenize);
+			analyzer.parse(data);
+			
+			if(analyzer.errorCount === 0){
+				logger.info("The .gift file is a valid gift file".green);
+			}else{
+				logger.info("The .gift file contains error".red);
+			}
+		});
+    })
+
+	.command('toQuestion', 'toQuestion')
+	.argument('<file>', 'The file to check')
+	.action(({args, options, logger}) => {
+        fs.readFile(args.file, 'utf8', function (err,data) {
+			if (err) {
+				return logger.warn(err);
+			}
+	  
+			var analyzer = new GiftParser();
+			analyzer.parse(data);
+			
+			console.log(analyzer.parsedQuestions);
+
+		});
+    })
+
 program.run(process.argv.slice(2));
