@@ -11,33 +11,25 @@ const directoryPath = path.join('data');
 questions
 .command('decomposer', 'deccompose en objet')
 .action(() => {
-    const giftObject = [];
-    fs.readdir(directoryPath, function (err, files) {
-        //handling error
-        if (err) {
-            return console.log('Unable to scan directory: ' + err);
-        }
-        //listing all files using forEach
-        files.forEach(function (file) {
-            // Do whatever you want to do with the file
-            //console.log(file + '\n\n');
-            filePath = path.join('data', file);
-            fs.readFile(filePath, 'utf-8', function(err, content) {
-              if (err) {
-                return console.log('Unable to scan file '+file+': '+err+'\n');
-              }
-              
-              giftObject.push(convertGIFTtoObject(content));
-              console.log(giftObject);
-              
-              
-            })
-        })
-        
-        
-        ;
-    });
-    //console.log(giftObject);
+  const directoryPath = 'data'; // Assurez-vous de spécifier le bon chemin
+  const giftObject = [];
+
+  try {
+      const files = fs.readdirSync(directoryPath);
+
+      files.forEach(file => {
+          const filePath = path.join(directoryPath, file);
+          const content = fs.readFileSync(filePath, 'utf-8');
+
+          giftObject.push(convertGIFTtoObject(content));
+      });
+
+      //console.log(giftObject);
+  } catch (err) {
+      console.error('Error: ' + err);
+  }
+    console.log(giftObject);
+    return giftObject;
   })
 
 questions.run(process.argv.slice(2));
