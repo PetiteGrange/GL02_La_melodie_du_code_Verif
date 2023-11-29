@@ -17,8 +17,9 @@ const QuestionType = {
     // ::Q7:: How are you? {}
     SA: 'SHORT_ANSWER',
     // ::Q8:: Two plus two equals {=four =4}
-    MW: 'MISSING WORD'
+    MW: 'MISSING WORD',
     // ::Q8:: Would you like {~=some~a few} rice with your chicken?
+    EXAMPLE: 'EXAMPLE'
 }
 
 module.exports = QuestionType;

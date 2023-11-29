@@ -17,11 +17,13 @@ class GiftParser {
 		var questions = []
         var curQuestion = ""
         data.forEach(element => {
-            curQuestion += element
-            if (element.includes("}")) {
-                questions.push(curQuestion)
-                curQuestion = ""
+            if (element.includes("::")) {
+                if (curQuestion != "") {
+                    questions.push(curQuestion)
+                    curQuestion = ""
+                }
             }
+            curQuestion += element
         });
         return questions
     }
@@ -93,15 +95,18 @@ class GiftParser {
             matches.push(match[1])
         }
 
+        // EXAMPLE
         if (matches.length == 0) {
-            this.errMsg("No answer", input);
-            return null
+            return [QT.EXAMPLE]
         }
 
         return matches
     }
 
     findType(input, pa) {
+        if (input == QT.EXAMPLE) {
+            return QT.EXAMPLE
+        }
         if (input.length == 1) {
             return QT.VF
         }
