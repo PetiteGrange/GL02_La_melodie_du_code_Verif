@@ -13,8 +13,12 @@ const QuestionType = {
     // ::Q5:: What is a number from 1 to 5? {#3:2}
     NUM_R: 'QUESTION_NUMERIQUE_RANGE',
     // ::Q6:: What is a number from 1 to 5? {#1..5}
-    TEXT: 'QUESTION_TEXT'
+    TEXT: 'QUESTION_TEXT',
     // ::Q7:: How are you? {}
+    SA: 'SHORT_ANSWER',
+    // ::Q8:: Two plus two equals {=four =4}
+    MW: 'MISSING WORD'
+    // ::Q8:: Would you like {~=some~a few} rice with your chicken?
 }
 
 module.exports = QuestionType;
