@@ -25,6 +25,7 @@ class GiftParser {
             }
             curQuestion += element
         });
+        questions.push(curQuestion)
         return questions
     }
 
@@ -111,6 +112,15 @@ class GiftParser {
         if (input == QT.EXAMPLE) {
             return QT.EXAMPLE
         }
+
+        if (input[0] == "#") {
+            if (input.includes(":")) {
+                return QT.NUM_E
+            } else if (input.includes("..")) {
+                return QT.NUM_R
+            }
+        }
+
         if (input.length == 1) {
             return QT.VF
         }
@@ -121,15 +131,10 @@ class GiftParser {
 
         if (input.includes("=")) {
             return pa ? QT.QCM : QT.QCU
-        } else if (input.includes(":")) {
-            return QT.NUM_E
-        } else if (input.includes("..")) {
-            return QT.NUM_R
-        }
+        } 
 
         return QT.TEXT
     }
-
 
     type(input, pa) {
         var matches = this.extractAnswers(input)
@@ -146,12 +151,59 @@ class GiftParser {
         var matches = this.extractAnswers(input)
         var answers = []
 
-        matches.forEach(element => {
-            answers.push(this.findAnswer(element, type, pa))
+        matches.forEach((element, idx) => {
+            if (element[0] == "#") {
+                matches[idx] = element.substring(1)
+            }
         })
+
+        matches.forEach(element => {
+            var a = this.findAnswer(element, type, pa)
+            console.log(a)
+            answers.push(a)
+        })
+
+        return answers
     }
 
+    static keyCaracters = ["=", "~"]
     findAnswer(input, type, pa) {
+        // Lit le contenu entre crochets envoyé dans "txt", et retourne les différentes réponses (vraies et fausses) envisagées ainsi que leur feedback s'il existe
+        function read(txt, accumulator = "", currentElement = "", elementsAccumulator = [], isFeedback = false, feedback = "") {
+            if (txt.length === 0) {
+                var finalElement = {}
+                finalElement[currentElement] = accumulator
+                finalElement["feedback"] = feedback
+                elementsAccumulator.push(finalElement)
+                return elementsAccumulator
+            }
+
+            var curCar = txt[0]
+
+            if (GiftParser.keyCaracters.includes(curCar)) {
+                if (accumulator != "") {
+                    var element = {}
+                    element[currentElement] = accumulator
+                    element["feedback"] = feedback
+                    elementsAccumulator.push(element)
+                    accumulator = ""
+                    feedback = ""
+                    isFeedback = false
+                }
+                currentElement = curCar
+            } else {
+                if (curCar == "#") {isFeedback = true}
+    
+                if (!isFeedback) {
+                    accumulator += curCar
+                } else {
+                    feedback += curCar
+                }
+            }
+
+            return read(txt.substring(1), accumulator, currentElement, elementsAccumulator, isFeedback, feedback)
+        }
+
         switch (type) {
             // testAns = Boolean
             // this.answer = Boolean
@@ -163,48 +215,36 @@ class GiftParser {
             case QT.TEXT:
                 return ""
             
-            var list = input.split(/=|~/).filter(segment => segment !== '')
-            // testAns = String
-            // this.answer = [{"text": String, "value": float, "feedback": String}]
-            case QT.QCU:
-                var answers = []
-                list.forEach(ans => {
-                    var text = ""
-                    var value = .0
-                    var feedback = ""
-                    if (ans.includes("#")) {
-                        feedback = ans.split('#')[1].trim()
-                    } else { feedback = ""}
+            default:
+                console.log("\nNOUVELLE QUESTION : \n" + input)
+                return read(input)
 
+            // // testAns = String
+            // // this.answer = [{"text": String, "value": float, "feedback": String}]
+            // case QT.QCU:
 
-                    if (!pa) {
+            // // testAns = [String]
+            // // this.answer = [{"text": String, "value": float, "feedback": String}]
+            // case QT.QCM:
 
-                    } else {
+            // // testAns = {"Question1": "Réponse1", "Question2": "Réponse2"}
+            // // this.answer = {"Question1": "Réponse1", "Question2": "Réponse2"}
+            // case QT.ASSO:
 
-                    }
-                })
+            // // testAns = float
+            // // this.answer = [{"target": float, "range": float", "value": float, "feedback": String}]
+            // case QT.NUM_E:
 
-            // testAns = [String]
-            // this.answer = [{"text": String, "value": float, "feedback": String}]
-            case QT.QCM:
+            // // testAns = float
+            // // this.answer = [{"min": float, "max": float, "value": float, "feedback": String}]
+            // case QT.NUM_R:
 
-            // testAns = {"Question1": "Réponse1", "Question2": "Réponse2"}
-            // this.answer = {"Question1": "Réponse1", "Question2": "Réponse2"}
-            case QT.ASSO:
-
-            // testAns = float
-            // this.answer = [{"target": float, "range": float", "value": float, "feedback": String}]
-            case QT.NUM_E:
-
-            // testAns = float
-            // this.answer = [{"min": float, "max": float, "value": float, "feedback": String}]
-            case QT.NUM_R:
-
-            case QT.TAT:
+            // // testAns = [String]
+            // // this.answer = [{"text": String, "value": float}]
+            // case QT.TAT:
 
 
         }
-        return null
     }
 
     partialCredit(input) {
