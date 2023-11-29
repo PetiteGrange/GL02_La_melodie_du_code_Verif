@@ -89,6 +89,17 @@ class Question {
             // this.answer = ""
             case QuestionType.TEXT:
                 return "Needs verification"      
+
+            // testAns = [String]
+            // this.answer = [{"text": String, "value": float}]
+            case QuestionType.TAT:
+                var score = .0
+                testAns.array.forEach((testA, idx) => {
+                    if (this.answer[idx] == testA) {
+                        score += this.answer[idx].value
+                    }
+                });
+                return score
         }
     }
 }

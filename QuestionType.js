@@ -15,9 +15,7 @@ const QuestionType = {
     // ::Q6:: What is a number from 1 to 5? {#1..5}
     TEXT: 'QUESTION_TEXT',
     // ::Q7:: How are you? {}
-    SA: 'SHORT_ANSWER',
-    // ::Q8:: Two plus two equals {=four =4}
-    MW: 'MISSING WORD',
+    TAT: 'QUESTION_TEXT_A_TROUS',
     // ::Q8:: Would you like {~=some~a few} rice with your chicken?
     EXAMPLE: 'EXAMPLE'
 }

@@ -55,9 +55,9 @@ class GiftParser {
 
     body(input) {
         var ti = this.title(input)
-        var te = this.text(input)
         var pa = this.partialCredit(input)
         var ty = this.type(input, pa)
+        var te = this.text(input, ty)
         var an = this.answer(input, ty, pa)
         return { "title": ti, "text": te, "type": ty, "answer": an, "partialCredit": pa }
     }
@@ -73,7 +73,7 @@ class GiftParser {
         }
     }
 
-    text(input) {
+    text(input, ty) {
         let occurrence = 0;
         const bracketRegex = /\{[^}]+\}/g;
         const titleRegex = /::[^:]+::/g;
@@ -82,7 +82,11 @@ class GiftParser {
 
         return stringWithoutTitle.replace(bracketRegex, match => {
             occurrence++;
-            return `->${occurrence}<-`;
+            if (ty == QT.TAT) {
+                return `->${occurrence}<-`;
+            } else {
+                return ""
+            }
         }).trim();
     }
 
@@ -132,22 +136,22 @@ class GiftParser {
         var types = []
 
         matches.forEach(element => {
-            types.push(this.findType(element))
+            types.push(this.findType(element, pa))
         })
 
         return types
     }
 
-    answer(input, type, partialCredit) {
+    answer(input, type, pa) {
         var matches = this.extractAnswers(input)
         var answers = []
 
         matches.forEach(element => {
-            answers.push(this.findAnswer(element, type, partialCredit))
+            answers.push(this.findAnswer(element, type, pa))
         })
     }
 
-    findAnswer(input, type, partialCredit) {
+    findAnswer(input, type, pa) {
         switch (type) {
             // testAns = Boolean
             // this.answer = Boolean
@@ -173,7 +177,7 @@ class GiftParser {
                     } else { feedback = ""}
 
 
-                    if (!partialCredit) {
+                    if (!pa) {
 
                     } else {
 
@@ -195,6 +199,9 @@ class GiftParser {
             // testAns = float
             // this.answer = [{"min": float, "max": float, "value": float, "feedback": String}]
             case QT.NUM_R:
+
+            case QT.TAT:
+
 
         }
         return null
