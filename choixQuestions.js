@@ -1,6 +1,6 @@
 const fs = require('fs');
 const questions = require("@caporal/core").default;
-const Question = require ('./Question.js');
+const colors = require('colors');
 
 const path = require('path');
 const directoryPath = path.join('data');
@@ -11,19 +11,21 @@ questions
   .command('afficher', 'Afficher toutes les questions disponnibles dans la base de données')
   .action(() => {
     fs.readdir(directoryPath, function (err, files) {
-        //handling error
+        // afficher les erreurs
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         }
-        //listing all files using forEach
+        // traitement pour chaque fichier du dossier
         files.forEach(function (file) {
-            // Do whatever you want to do with the file
-            console.log(file + '\n\n');
+            // on spécifie le bon chemin pour lire les fichiers
             filePath = path.join('data', file);
             fs.readFile(filePath, 'utf-8', function(err, content) {
+              // afficher les erreurs
               if (err) {
                 return console.log('Unable to scan file '+file+': '+err+'\n');
               }
+              // afficher le nom du fichier puis l'entièreté du fichier
+              console.log(`\n\n\n\n\n ${file} \n\n`.green);
               console.log(content + '\n');
             })
         });
