@@ -16,11 +16,19 @@ program
             if (err) {
                 return console.log('Unable to scan directory: ' + err);
             }
-            //for each file, comparing question type with <criteria>
+            //for each file, comparing question type with the options
+
             files.forEach(function(files){
-                    //generate question from the file
-                    //if ctype of at least one question in the file is the same as criteria, display it 
-                    //else, logger.warn(err)
+                if(options.nc && files.includes(options.nc)){
+                    console.log(`File with name containing "${options.nc}": ${file}`);
+                    fs.readFile(filePath, 'utf-8', function(err, content) {
+                        // afficher les erreurs
+                        if (err) {
+                          return console.log('Unable to scan file '+file+': '+err+'\n');
+                        }
+                        console.log(content + '\n');
+                    })
+                }          
             })
         })
 
