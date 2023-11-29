@@ -4,9 +4,13 @@ const program = require('caporal')
 
 program
 
-    .command('search', 'afficher une question spécifique, en fonction de son nom ou de critères de recherche')
-    .argument('<criteria>', 'critère que les fichiers à afficher doivent vérifier')
-    .action(({args, logger}) =>{
+    .command('search_files', 'afficher une question spécifique, en fonction de son nom ou de critères de recherche')
+    .alias("sf")
+    .argument('[name...]', 'nom du ou des fichiers')
+    .option('-nc <word>', 'le nom du fichier contient "word"')
+    .option('-c <expresssion>', 'le fichier que l on veut afficher contient "expression"')
+    .option('-t <type...>', 'le fichier contient des questions du type ')
+    .action(({args, options, logger}) =>{
         fs.readdir(directoryPath, function (err, files) {
             //handling error
             if (err) {
