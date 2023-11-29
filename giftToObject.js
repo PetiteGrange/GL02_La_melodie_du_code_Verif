@@ -10,8 +10,10 @@ const directoryPath = path.join('data');
 
 questions
 .command('decomposer', 'deccompose en objet')
-.action(() => {
-  const directoryPath = 'data'; // Assurez-vous de spécifier le bon chemin
+.argument("<file>", "chemin d'accès")
+.action(({args}) => {
+  const directoryPath = args.file; // Assurez-vous de spécifier le bon chemin
+  console.log(args.file);
   const giftObject = [];
 
   try {
