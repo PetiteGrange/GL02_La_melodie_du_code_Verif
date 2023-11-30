@@ -24,8 +24,8 @@ program
                     if (err) {
                         return console.log('Unable to scan file ' + filename + ': ' + err + '\n');
                     }
-                    //console.log('\n\nname of the file:'.red, filename.red, '\n\n');
-                    //console.log(content + '\n\n\n');
+                    console.log('\n\nname of the file:'.red, filename.red, '\n\n');
+                    console.log(content + '\n\n\n');
         
                     mainModule.toQuestion(filePath, (err, parsedQuestions) => {
                         if (err) {
