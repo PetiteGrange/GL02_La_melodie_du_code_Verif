@@ -8,34 +8,34 @@ const directoryPath = path.join('data');
 const mainModule = require('./main.js');
 
 program
-    .command('search', 'afficher une ou des questions spécifiques, en fonction de son nom ou de critères de recherche')
+    .command('searchf', 'permet de rechercher une question dans un fichier parmi la base de données')
     .argument('[name...]', 'nom du ou des fichiers')
     .option('-n, --word <word>', 'le nom du fichier contient "word"')
     .option('-c, --expression <expresssion>', 'le fichier que l on veut afficher contient "expression"')
     .option('-t, --type <type...>', 'le fichier contient des questions du type ')
     .action(({args, options, logger}) =>{
         
-        if(args.name){
-            for(i = 0; i < args.name.length; i++){  //pour chaque fichier dont le nom a été donné, va le lire, l'afficher et puis le transformer en une suite de questions
-                filename = args.name[i] 
-                filePath = path.join('data',filename)
-                fs.readFile(filePath, 'utf-8', function(err, content){
+        if (args.name) {
+            args.name.forEach(filename => {
+                console.log(filename);
+                const filePath = path.join('data', filename);
+        
+                fs.readFile(filePath, 'utf-8', (err, content) => {
                     if (err) {
-                        return console.log('Unable to scan file '+file+': '+err+'\n');
+                        return console.log('Unable to scan file ' + filename + ': ' + err + '\n');
                     }
-                    console.log('\n\nname of the file:'.red ,filename.red,'\n\n')
-                    console.log(content + '\n\n\n');
-
-                    mainModule.toQuestion(filePath, (err, parsedQuestions) => {   //transforme le fichier ouvert en une suite de questions
+                    //console.log('\n\nname of the file:'.red, filename.red, '\n\n');
+                    //console.log(content + '\n\n\n');
+        
+                    mainModule.toQuestion(filePath, (err, parsedQuestions) => {
                         if (err) {
                             console.error(err);
                         } else {
                             console.log(parsedQuestions);
                         }
                     });
-                })
-            }
-            
+                });
+            });
         }
 
         fs.readdir(directoryPath, function (err, files) {
