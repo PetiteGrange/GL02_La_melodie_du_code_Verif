@@ -216,7 +216,6 @@ class GiftParser {
                 return ""
             
             default:
-                console.log("\nNOUVELLE QUESTION : \n" + input)
                 return read(input)
 
             // // testAns = String
