@@ -159,7 +159,6 @@ class GiftParser {
 
         matches.forEach(element => {
             var a = this.findAnswer(element, type, pa)
-            console.log(a)
             answers.push(a)
         })
 
@@ -249,6 +248,7 @@ class GiftParser {
     partialCredit(input) {
         return input.includes('%')
     }
+
 }
 
 module.exports = GiftParser;
