@@ -16,18 +16,15 @@ program
     .action(({args, options, logger}) =>{
         
         if(args.name){
-            console.log(args.name)
             for(i = 0; i < args.name.length; i++){  //pour chaque fichier dont le nom a été donné, va le lire, l'afficher et puis le transformer en une suite de questions
-                console.log(args.name[i])
                 filename = args.name[i] 
                 filePath = path.join('data',filename)
                 fs.readFile(filePath, 'utf-8', function(err, content){
                     if (err) {
-                        
                         return console.log('Unable to scan file '+file+': '+err+'\n');
                     }
                     console.log('\n\nname of the file:'.red ,filename.red,'\n\n')
-                    //console.log(content + '\n\n\n');
+                    console.log(content + '\n\n\n');
 
                     mainModule.toQuestion(filePath, (err, parsedQuestions) => {   //transforme le fichier ouvert en une suite de questions
                         if (err) {
@@ -55,13 +52,13 @@ program
 
                     console.log(`File with name containing "${options.n}": ${file}`.red);
                     filePath = path.join('data', file);
- /*                   fs.readFile(filePath, 'utf-8', function(err, content) {
+                    fs.readFile(filePath, 'utf-8', function(err, content) {
                         // afficher les erreurs
                         if (err) {
                           return console.log('Unable to scan file '+file+': '+err+'\n');
                         }
                         console.log(content + '\n'); 
-                    })*/
+                    })
                 }  
                 
                 if(options.c){
@@ -81,4 +78,4 @@ program
         })
 
     })
-    program.run(process.argv.slice(2));
+program.run(process.argv.slice(2));
