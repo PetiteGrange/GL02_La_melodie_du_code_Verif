@@ -7,7 +7,7 @@ const directoryPath = path.join('data');
 
 program
 
-    .command('search_files', 'afficher une question spécifique, en fonction de son nom ou de critères de recherche')
+    .command('search_files', 'afficher une ou des questions spécifiques, en fonction de son nom ou de critères de recherche')
     .alias("sf")
     .argument('[name...]', 'nom du ou des fichiers')
     .option('-n, --word <word>', 'le nom du fichier contient "word"')
