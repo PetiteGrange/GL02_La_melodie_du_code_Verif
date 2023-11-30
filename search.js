@@ -5,29 +5,37 @@ const colors = require('colors');
 const path = require('path');
 const directoryPath = path.join('data');
 
-program
+const mainModule = require('./main.js');
 
-    .command('search_files', 'afficher une ou des questions spécifiques, en fonction de son nom ou de critères de recherche')
-    .alias("sf")
+program
+    .command('search', 'afficher une ou des questions spécifiques, en fonction de son nom ou de critères de recherche')
     .argument('[name...]', 'nom du ou des fichiers')
     .option('-n, --word <word>', 'le nom du fichier contient "word"')
     .option('-c, --expression <expresssion>', 'le fichier que l on veut afficher contient "expression"')
     .option('-t, --type <type...>', 'le fichier contient des questions du type ')
     .action(({args, options, logger}) =>{
-
+        
         if(args.name){
-            for(i = 0; i < args.name.length; i ++){
-
-                filename = args.name[i] // a changer pour si il y a plus que un fichier a afficher, ici c'était juste pour voir si ca marchait
+            console.log(args.name)
+            for(i = 0; i < args.name.length; i++){  //pour chaque fichier dont le nom a été donné, va le lire, l'afficher et puis le transformer en une suite de questions
+                console.log(args.name[i])
+                filename = args.name[i] 
                 filePath = path.join('data',filename)
                 fs.readFile(filePath, 'utf-8', function(err, content){
-
                     if (err) {
                         
                         return console.log('Unable to scan file '+file+': '+err+'\n');
                     }
                     console.log('\n\nname of the file:'.red ,filename.red,'\n\n')
-                    console.log(content + '\n\n\n');
+                    //console.log(content + '\n\n\n');
+
+                    mainModule.toQuestion(filePath, (err, parsedQuestions) => {   //transforme le fichier ouvert en une suite de questions
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            console.log(parsedQuestions);
+                        }
+                    });
                 })
             }
             

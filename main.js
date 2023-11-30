@@ -64,4 +64,19 @@ program
 		});
     })
 
+	module.exports = {
+		toQuestion: (file, callback) => {
+			fs.readFile(file, 'utf8', (err, data) => {
+				if (err) {
+					return callback(err, null);
+				}
+	
+				const analyzer = new GiftParser();
+				analyzer.parse(data);
+	
+				callback(null, analyzer.parsedQuestions);
+			});
+		}
+	}
+
 program.run(process.argv.slice(2));
