@@ -18,30 +18,30 @@ program
     .action(async ({args, options, logger}) =>{
         
         if (args.name) {
-            const selectedTypes = await askQuestionType();
-            args.name.forEach(filename => {
+            const selectedTypes = await askQuestionType();  //interface utilisateur pour choix des types voulus
+            args.name.forEach(filename => {  //pour chaque fichier dont le nom a été entré par l'utilisateur
 
                 console.log(filename);
-                const filePath = path.join('data', filename);
+                const filePath = path.join('data', filename);  //création du chemin
         
-                fs.readFile(filePath, 'utf-8', (err, content) => {
+                fs.readFile(filePath, 'utf-8', (err, content) => {  //lecture du fichier
                     if (err) {
                         return console.log('Unable to scan file ' + filename + ': ' + err + '\n');
                     }
-                    console.log('\n\nname of the file:'.red, filename.red, '\n\n');
-                    console.log(content + '\n\n\n');
+                    console.log('\n\nname of the file:'.red, filename.red, '\n\n'); //affichage du nom 
+                    console.log(content + '\n\n\n');  //affichage du contenu 
         
-                    mainModule.toQuestion(filePath, (err, parsedQuestions) => {
+                    mainModule.toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
                         if (err) {
                             console.error(err);
                         } else {
-                            // const filteredQuestions = parsedQuestions.filter(question => {
-                            //     return selectedTypes.includes(question.type);
-                            // });
+                            const filteredQuestions = parsedQuestions.filter(question => {  //filtrage en fonction des types
+                                return selectedTypes.includes(question.type);
+                            });
 
-                            // console.log(selectedTypes, '\n\n\n')
-                            // console.log(filteredQuestions);
-                            console.log(parsedQuestions)
+                            console.log(selectedTypes, '\n\n\n')  //affichage des types selectionnés
+                            console.log(filteredQuestions);  //affichage des questions avec le bon type
+                            //console.log(parsedQuestions)
                         }
                     });
                 });
