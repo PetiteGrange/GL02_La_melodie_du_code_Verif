@@ -108,32 +108,43 @@ class GiftParser {
         return matches
     }
 
+
     findType(input, pa) {
+        const reg1 = /#.*\.\..*/ //Format NUM_R
+        const reg2 = /#.*\:.*/   //Format NUM_E
+
         if (input == QT.EXAMPLE) {
             return QT.EXAMPLE
-        }
+            
+          } else if (input.includes("{}")) {
+            return QT.TEXT;
+          } else if (input.includes("~%")) {
+            return QT.QCM;
+          }else if (input.includes("~=")) {
+            return QT.MM;
+        
+          } else if (input.includes("~") && input.includes("=")) {
+            return QT.QCU;
+        
+          } else if (input.includes("=")&& input.includes("->")) {
+            return QT.ASSO;
+          }else if (input.includes("=")) {
+            return QT.TAT;
+          }else if (reg1.test(input)) {    
+            return QT.NUM_R;
+        
+          }else if (reg2.test(input)) {
+            return QT.NUM_E;
+        
+          }else if (input.includes("TRUE") || input.includes("FALSE") || input.includes("T") || input.includes("F")) {
+            return QT.VF;
+        
+          }  else {
+            return "error";
+           }
+           
 
-        if (input[0] == "#") {
-            if (input.includes(":")) {
-                return QT.NUM_E
-            } else if (input.includes("..")) {
-                return QT.NUM_R
-            }
-        }
-
-        if (input.length == 1) {
-            return QT.VF
-        }
-
-        if (input.includes("->")) {
-            return QT.ASSO
-        }
-
-        if (input.includes("=")) {
-            return pa ? QT.QCM : QT.QCU
-        } 
-
-        return QT.TEXT
+        
     }
 
     type(input, pa) {

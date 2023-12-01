@@ -2,10 +2,13 @@ const fs = require('fs');
 const questions = require("@caporal/core").default;
 const Question = require('./Question.js');
 const QuestionType = require('./QuestionType.js');
+const path = require('path');
 
+
+
+/*
 const path = require('path');
 const directoryPath = path.join('data');
-
 
 
 questions
@@ -35,9 +38,30 @@ questions
   })
 
 questions.run(process.argv.slice(2));
+*/
 
+function decomposer(data) {
 
+const giftObject = [];
+const directoryPath =data;
 
+try {
+    const files = fs.readdirSync(directoryPath);
+
+    files.forEach(file => {
+        const filePath = path.join(directoryPath, file);
+        const content = fs.readFileSync(filePath, 'utf-8');
+
+        giftObject.push(convertGIFTtoObject(content));
+    });
+
+    //console.log(giftObject);
+} catch (err) {
+    console.error('Error: ' + err);
+}
+  //console.log(giftObject);
+  return giftObject;
+}
 
 function convertGIFTLinetoObject(giftText) {
   const resultObject = {};
@@ -96,13 +120,12 @@ function typeQuestion(chaine) {
   const reg2 = /\{#.*\:.*\}/   //Format NUM_E
   let type = QuestionType.TEXT;
 
-
   if (chaine.includes("{}")) {
     type = QuestionType.TEXT;
   } else if (chaine.includes("~%")) {
     type = QuestionType.QCM;
   }else if (chaine.includes("~=")) {
-    type = QuestionType.MW;
+    type = QuestionType.TAT;
 
   } else if (chaine.includes("~") && chaine.includes("=")) {
     type = QuestionType.QCU;
@@ -112,10 +135,8 @@ function typeQuestion(chaine) {
 
   } else if (chaine.includes("{") && chaine.includes("=")&& chaine.includes("->")) {
     type = QuestionType.ASSO;
-
-  }else if (chaine.includes("{") && chaine.includes("=")&& !chaine.includes("~")) {
+  }else if (chaine.includes("{") && chaine.includes("=")) {
     type = QuestionType.SA;
-
   }else if (reg1.test(chaine)) {    
     type = QuestionType.NUM_R;
 
@@ -125,10 +146,17 @@ function typeQuestion(chaine) {
   } else {
       type = "Description";
    }
-
-
   return type;
 }
 
-module.exports = questions,supprimerBalisesHTML, convertGIFTLinetoObject, typeQuestion,convertGIFTtoObject;
+module.exports = {
+  decomposer,
+  supprimerBalisesHTML,
+  convertGIFTLinetoObject,
+  typeQuestion,
+  convertGIFTtoObject
+};
+//module.exports = supprimerBalisesHTML, convertGIFTLinetoObject, typeQuestion,convertGIFTtoObject;
 //module.exports = questions;
+
+decomposer("data");
