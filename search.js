@@ -6,6 +6,8 @@ const path = require('path');
 const directoryPath = path.join('data');
 
 const mainModule = require('./main.js');
+const { askQuestionType } = require('./askQuestionType');
+
 
 program
     .command('searchf', 'permet de rechercher une question dans un fichier parmi la base de données')
@@ -13,10 +15,12 @@ program
     .option('-n, --word <word>', 'le nom du fichier contient "word"')
     .option('-c, --expression <expresssion>', 'le fichier que l on veut afficher contient "expression"')
     .option('-t, --type <type...>', 'le fichier contient des questions du type ')
-    .action(({args, options, logger}) =>{
+    .action(async ({args, options, logger}) =>{
         
         if (args.name) {
+            const selectedTypes = await askQuestionType();
             args.name.forEach(filename => {
+
                 console.log(filename);
                 const filePath = path.join('data', filename);
         
@@ -31,7 +35,13 @@ program
                         if (err) {
                             console.error(err);
                         } else {
-                            console.log(parsedQuestions);
+                            // const filteredQuestions = parsedQuestions.filter(question => {
+                            //     return selectedTypes.includes(question.type);
+                            // });
+
+                            // console.log(selectedTypes, '\n\n\n')
+                            // console.log(filteredQuestions);
+                            console.log(parsedQuestions)
                         }
                     });
                 });
