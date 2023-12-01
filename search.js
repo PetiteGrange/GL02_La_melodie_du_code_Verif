@@ -38,7 +38,7 @@ program
                             const filteredQuestions = parsedQuestions.filter(question => {  //filtrage en fonction des types
                                 return selectedTypes.includes(question.type);
                             });
-
+                            //c'est la que ca merde, il faudrait que je comprenne mieux les types pour que ca fonctionne correctement
                             console.log(selectedTypes, '\n\n\n')  //affichage des types selectionnés
                             console.log(filteredQuestions);  //affichage des questions avec le bon type
                             //console.log(parsedQuestions)
@@ -55,8 +55,8 @@ program
                 return console.log('Unable to scan directory: ' + err);
             }
 
-            //for each file, comparing question type with the options
-            files.forEach(function(file){
+            
+            files.forEach(function(file){  //pour tous les fichiers, on regarde quelle option a été choisie
 
                 if(options.n && file.includes(options.n)){
 
