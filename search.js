@@ -12,7 +12,7 @@ const filterQuestions = require('./filterQuestions');
 
 
 program
-    .command('searchf', 'permet de rechercher une question dans un fichier parmi la base de données')
+    .command('searchf', 'permet de rechercher un fichier parmi la base de données')
     .argument('[name...]', 'nom du ou des fichiers')
     .option('-n, --word <word>', 'le nom du fichier contient "word"')
     .option('-c, --expression <expresssion>', "le fichier que l'on veut afficher contient 'expression'")
@@ -51,13 +51,13 @@ program
 
                 if(options.n && file.includes(options.n)){
                     console.log(`Files with name containing "${options.n}": ${file}`.red);
-                    filePath = path.join('data', file);
-                    fs.readFileSync(filePath, 'utf-8', function(err, content) {
+                    const filePath = path.join('data', file);
+                    fs.readFile(filePath, 'utf-8', function(err, content) {
                         if (err) {  // afficher les erreurs
                           return console.log('Unable to scan file '+file+': '+err+'\n');
                         }
                         console.log("\n--------------------------------------------".green)
-                        console.log('name of the file:', filename.green); //affichage du nom 
+                        console.log('name of the file:', file.green); //affichage du nom 
                         console.log("--------------------------------------------".green,'\n')
                         console.log(content + '\n');  //affichage du contenu 
             
@@ -72,32 +72,30 @@ program
                     })
                 }  
                 
-                if(options.c){
-                    logger.info(`Files containing "${options.c}": ${file}`.red);
-                    filePath = path.join('data', file);
-                    fs.readFileSync(filePath, 'utf-8', function(err, content) {
-                        if (err) {  // afficher les erreurs
-                          return console.log('Unable to scan file '+file+': '+err+'\n');
+                if (options.c) {
+                    const filePath = path.join('data', file);
+                    fs.readFile(filePath, 'utf-8', function (err, content) {
+                        if (err) {
+                            return console.log('Unable to scan file ' + file + ': ' + err + '\n');
                         }
-                        console.log("\n--------------------------------------------".green)
-                        console.log('name of the file:', filename.green); //affichage du nom 
-                        console.log("--------------------------------------------".green,'\n')
-                        console.log(content + '\n');  //affichage du contenu 
-            
-                        mainModule.toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
-                            if (err) {
-                                console.error(err);
-                            } else {
-                                console.log(parsedQuestions)
-                            }
-                        });
-                        //console.log(content + '\n'); 
-                    })
+                        // Vérification si le contenu du fichier contient l'expression spécifiée
+                        if (content.includes(options.c)) {
+                            console.log(`Le fichier ${file} contient l'expression "${options.c}".`);
+                
+                            // Vous pouvez également ajouter ici la logique pour traiter le fichier si nécessaire
+                            mainModule.toQuestion(filePath, (err, parsedQuestions) => {
+                                if (err) {
+                                    console.error(err);
+                                } else {
+                                    console.log(parsedQuestions);
+                                }
+                            });
+                        }
+                    });
                 }
             })
         })
 
     })
-
   
 program.run(process.argv.slice(2));
