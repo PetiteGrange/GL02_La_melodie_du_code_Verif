@@ -8,9 +8,10 @@ const directoryPath = path.join('data');
 const mainModule = require('./main.js');
 
 const Question = require('./Question.js');
-const filterQuestions = require('./filterQuestions');
 const QT = require('./QuestionType.js')
-const askForFileTypes = require('./askQuestionType');
+
+
+
 
 
 program
@@ -19,13 +20,11 @@ program
     .option('-n, --word <word>', 'le nom du fichier contient "word"')
     .option('-c, --expression <expresssion>', "le fichier que l'on veut afficher contient 'expression'")
     .action(({args, options, logger}) =>{
-        askForFileTypes((selectedTypes) => {
-            console.log('Types de fichiers sélectionnés dans app.js :', selectedTypes);
-        });
+
         if (args.name) {
             args.name.forEach(filename => {  //pour chaque fichier dont le nom a été entré par l'utilisateur
                 const filePath = path.join('data', filename);  //création du chemin
-                fs.readFileSync(filePath, 'utf-8', (err, content) => {  //lecture du fichier
+                fs.readFile(filePath, 'utf-8', (err, content) => {  //lecture du fichier
                     if (err) {
                         return console.log('Unable to scan file ' + filename + ': ' + err + '\n');
                     }
