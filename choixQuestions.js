@@ -1,81 +1,115 @@
-const fs = require('fs');
-const questions = require("@caporal/core").default;
-const colors = require('colors');
+const fs = require('fs').promises;
 const inquirer = require('inquirer');
-
 const path = require('path');
+const GiftParser = require('./GiftParser.js');
+const questions = require('@caporal/core').default;
+
 const directoryPath = path.join('data');
-const mainModule = require('./main.js');
+
+let questionnaireFini;
 
 questions
-
-  // affichage
-  .command('afficher', 'Afficher les différents fichiers disponnibles contenant des questions')
-  .action(() => {
-    // lecture du dossier contenant tous les fichiers de questions
-    fs.readdir(directoryPath, async function (err, files) {
-        // affichage des erreurs
-        if (err) {
-            return console.log('Unable to scan directory: ' + err);
+  .command('créerQuestionnaire', 'Afficher les différents fichiers disponibles contenant des questions')
+  .action(async function () {
+    let questionnaire = [];
+    questionnaireFini = false;
+    let question;
+    let ajout = '';
+    while (questionnaireFini == false) {
+      question = await selectQuestion();
+      console.log(question);
+      if (questionnaireFini == false) {
+        ajout = await ajoutQuestion();
+        if (ajout == 'Oui') {
+          questionnaire.push(question);
+          console.log('Vous avez ajouté cette question au questionnaire. Le questionnaire a '+questionnaire.length+' questions.');
         }
-        // choix du fichier à ouvrir
-        let file = await choixFichier(files);
-        //lecture du fichier
-        filePath = path.join(directoryPath, file.toString());
-        fs.readFile(filePath, 'utf-8', function(err, content) {
-          // affichage des erreurs
-          if (err) {
-            return console.log('Unable to scan file '+file+': '+err+'\n');
-          }
-          // affichage des questions du fichier sélectionné
-          mainModule.toQuestion(filePath, async function (err, parsedQuestions) {  //parsing en objets de type question
-              if (err) {
-                  // affichage des erreurs
-                  console.error(err);
-              } else {
-                  let numQuestions = [];
-                  let i = 1;
-                  parsedQuestions.forEach((item) => {
-                    numQuestions.push(i);
-                    i++;
-                  });
-                  let questionChoisie = await choixQuestion(numQuestions);
-                  console.log(parsedQuestions[questionChoisie-1]);
-              }
-          });
-        })
-        });
-    });
+      }
+    }
+    console.log('******************************'.green);
+    console.log('Voici votre questionnaire'.green);
+    console.log('******************************'.green);
+    console.log(questionnaire);
+  });
 
+async function selectQuestion() {
+  try {
+    const files = await fs.readdir(directoryPath);
+    const selectedFiles = await choixFichier(files);
+    if (selectedFiles == 'Terminer') {questionnaireFini = true;}
+    const filePath = path.join(directoryPath, selectedFiles[0]);
 
+    const content = await fs.readFile(filePath, 'utf-8');
+    const parsedQuestions = await giftToQuestion(content);
 
-  async function choixFichier(names) {
+    const numQuestions = parsedQuestions.map((_, index) => index + 1);
+    const questionChoisie = await choixQuestion(numQuestions);
 
-      const answers = await inquirer.prompt([
-          {
-              type: 'checkbox',
-              name: 'selectedTypes',
-              message: 'Choisissez le fichier que vous voulez ouvrir',
-              choices: names,
-          },
-      ]);
-
-      return answers.selectedTypes;
+    return parsedQuestions[questionChoisie - 1];
+  } catch (err) {
+    console.error(err);
   }
+}
 
+async function choixFichier(choix) {
+    if (choix[choix.length-1] != 'Terminer') {choix.push('Terminer');}
+    const answers = await inquirer.prompt([
+        {
+            type: 'checkbox',
+            name: 'selectedTypes',
+            message: 'Choisissez le fichier que vous voulez ouvrir',
+            choices: choix,
+        },
+    ]);
 
-  async function choixQuestion(questions) {
+    return answers.selectedTypes;
+}
 
-      const answers = await inquirer.prompt([
-          {
-              type: 'checkbox',
-              name: 'selectedTypes',
-              message: 'Choisissez le numéro de question que vous voulez visionner :',
-              choices: questions,
-          },
-      ]);
+async function choixQuestion(questions) {
+  const answers = await inquirer.prompt([
+    {
+      type: 'checkbox',
+      name: 'selectedTypes',
+      message: 'Choisissez le numéro de question que vous voulez visionner :',
+      choices: questions,
+    },
+  ]);
 
-      return answers.selectedTypes;
-  }
+  return answers.selectedTypes[0];
+}
+
+async function ajoutQuestion(variable) {
+
+    const answers = await inquirer.prompt([
+        {
+            type: 'checkbox',
+            name: 'selectedTypes',
+            message: 'Voulez-vous ajouter cette question au questionnaire ?',
+            choices: ['Oui','Non'],
+        },
+    ]);
+
+    return answers.selectedTypes;
+}
+
+async function giftToQuestion(data) {
+  const analyzer = new GiftParser();
+  analyzer.parse(data);
+  return analyzer.parsedQuestions;
+}
+
+async function ajoutQuestion() {
+
+    const answers = await inquirer.prompt([
+        {
+            type: 'checkbox',
+            name: 'selectedTypes',
+            message: 'Voulez-vous ajouter cette question au questionnaire ?',
+            choices: ['Oui','Non'],
+        },
+    ]);
+
+    return answers.selectedTypes;
+}
 
 questions.run(process.argv.slice(2));
