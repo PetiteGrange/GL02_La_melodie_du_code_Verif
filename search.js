@@ -10,6 +10,8 @@ const mainModule = require('./main.js');
 const Question = require('./Question.js');
 const filterQuestions = require('./filterQuestions');
 
+const { askQuestionType } = require('./askQuestionType');
+
 
 program
     .command('searchf', 'permet de rechercher un fichier parmi la base de données')
@@ -97,5 +99,7 @@ program
         })
 
     })
+
+    
   
 program.run(process.argv.slice(2));
