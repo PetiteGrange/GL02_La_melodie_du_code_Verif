@@ -1,4 +1,5 @@
 function filterQuestions(parsedQuestions, selectedTypes) {
+    console.log(parsedQuestions)
     parsedQuestions.forEach(question => {
         console.log(question.type);
     });
