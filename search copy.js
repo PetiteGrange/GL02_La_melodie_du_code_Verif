@@ -12,6 +12,8 @@
     const QT = require('./QuestionType.js')  //importation de QuestionType pour avoir les différents type des questions
     const GiftParser = require('./GiftParser.js');  //importation de GiftParser pour parser un fichier en questions
 
+    const inquirer = require('inquirer'); // Ajout du module inquirer pour l'interface interactive
+
 
 
 
@@ -21,7 +23,22 @@
         .argument('[name...]', 'nom du ou des fichiers')
         .option('-n, --word <word>', 'le nom du fichier contient "word"')
         .option('-c, --expression <expresssion>', "le fichier que l'on veut afficher contient 'expression'")
-        .action(({args, options, logger}) =>{
+        .action(async({args, options, logger}) =>{
+
+            const answers = await inquirer.prompt([
+                {
+                    type: 'checkbox',
+                    message: 'Sélectionnez les types de questions à afficher:',
+                    name: 'types',
+                    choices: Object.keys(QT).map(key => ({
+                        name: `${key}: ${QT[key]}`, // Affichage de la clé et de sa description
+                        value: key // Utilisation de la clé comme valeur de retour
+                    }))
+                }
+            ]);
+    
+            const selectedTypes = answers.types;
+            console.log(selectedTypes)
 
             if (args.name) {
                 args.name.forEach(filename => {  //pour chaque fichier dont le nom a été entré par l'utilisateur
@@ -39,6 +56,15 @@
                             if (err) {
                                 console.error(err);
                             } else {
+                                const filteredQuestions = parsedQuestions.filter(question => {
+                                    console.log('Question Key:', question.key); // Assurez-vous que key est la clé de la question
+                                    console.log('Selected Types:', selectedTypes);
+                                    const includesSelectedType = selectedTypes.includes(question.key); // Comparer avec la clé
+                                    console.log('Includes Selected Type:', includesSelectedType);
+                                    return includesSelectedType;
+                                });
+                                
+                                console.log('Filtered Questions:', filteredQuestions);
                                 console.log(parsedQuestions)
                             }
                         });
