@@ -1,14 +1,16 @@
-const fs = require('fs');
-const program = require("@caporal/core").default;
-const colors = require('colors');
+// Importation des différentes features extérieures
+// nécessaires au fonctionnement du programme.
 
-const path = require('path');
+const fs = require('fs');  // fs sert à lire les dossiers et fichiers.
+const program = require("@caporal/core").default;  //importation de caporal pour créer des commandes
+const colors = require('colors');  //importation de colors pour pouvoir afficher du texte en couleur
+
+const path = require('path');  //chemin absolu pour faciliter l'ecriture de chemins
 const directoryPath = path.join('data');
 
-const mainModule = require('./main.js');
-
-const Question = require('./Question.js');
-const QT = require('./QuestionType.js')
+const Question = require('./Question.js');  
+const QT = require('./QuestionType.js')  //importation de QuestionType pour avoir les différents type des questions
+const GiftParser = require('./GiftParser.js');  //importation de GiftParser pour parser un fichier en questions
 
 
 
@@ -33,7 +35,7 @@ program
                     console.log("--------------------------------------------".green,'\n')
                     console.log(content + '\n');  //affichage du contenu 
         
-                    mainModule.toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+                    toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
                         if (err) {
                             console.error(err);
                         } else {
@@ -65,7 +67,7 @@ program
                         console.log("--------------------------------------------".green,'\n')
                         console.log(content + '\n');  //affichage du contenu 
             
-                        mainModule.toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+                        toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
                             if (err) {
                                 console.error(err);
                             } else {
@@ -87,7 +89,7 @@ program
                             console.log(`Le fichier ${file} contient l'expression "${options.c}".`);
                 
                             // Vous pouvez également ajouter ici la logique pour traiter le fichier si nécessaire
-                            mainModule.toQuestion(filePath, (err, parsedQuestions) => {
+                            toQuestion(filePath, (err, parsedQuestions) => {
                                 if (err) {
                                     console.error(err);
                                 } else {
@@ -101,7 +103,21 @@ program
         })
 
     })
+    
 
+
+function toQuestion(file, callback) {
+    fs.readFile(file, 'utf8', (err, data) => {
+        if (err) {
+            return callback(err, null);
+        }
+
+        const analyzer = new GiftParser();
+        analyzer.parse(data);
+
+        callback(null, analyzer.parsedQuestions);
+    });
+}
     
   
 program.run(process.argv.slice(2));
