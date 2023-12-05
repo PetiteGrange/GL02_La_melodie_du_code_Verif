@@ -227,32 +227,6 @@ class GiftParser {
             
             default:
                 return read(input)
-
-            // // testAns = String
-            // // this.answer = [{"text": String, "value": float, "feedback": String}]
-            // case QT.QCU:
-
-            // // testAns = [String]
-            // // this.answer = [{"text": String, "value": float, "feedback": String}]
-            // case QT.QCM:
-
-            // // testAns = {"Question1": "Réponse1", "Question2": "Réponse2"}
-            // // this.answer = {"Question1": "Réponse1", "Question2": "Réponse2"}
-            // case QT.ASSO:
-
-            // // testAns = float
-            // // this.answer = [{"target": float, "range": float", "value": float, "feedback": String}]
-            // case QT.NUM_E:
-
-            // // testAns = float
-            // // this.answer = [{"min": float, "max": float, "value": float, "feedback": String}]
-            // case QT.NUM_R:
-
-            // // testAns = [String]
-            // // this.answer = [{"text": String, "value": float}]
-            // case QT.TAT:
-
-
         }
     }
 
