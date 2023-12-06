@@ -29,7 +29,6 @@ describe("Program Semantic testing of Question", function(){
 
 	});
 
-<<<<<<< HEAD
 	xit("can add a new ranking", function(){
 
 		this.p.addRating(2);
@@ -44,6 +43,4 @@ describe("Program Semantic testing of Question", function(){
 	});
 
 
-=======
->>>>>>> refs/remotes/origin/main
 });

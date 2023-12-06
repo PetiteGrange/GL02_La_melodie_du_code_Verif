@@ -10,6 +10,12 @@ class GiftParser {
         this.errorCount = 0
     }
 
+/*
+Description : Découpe le texte en entrée en une liste de string contenant une question chacune
+Entrée : data (String) => Contenu du fichier
+Fonctionnement : Utilise les "::" marquant les titres de questions pour les séparer les unes des autres
+Sortie : liste de string contenant les questions => [String]
+*/
     tokenize(data) {
         var separator = /\r\n/
 		data = data.split(separator)
@@ -29,6 +35,12 @@ class GiftParser {
         return questions
     }
 
+/*
+Description : Cette fonction est le point d'entrée du parser. Elle appelle les autres fonctions du parser pour transformer le contenu du fichier donné en entrée en liste d'objets Question
+Entrée : data (String) => contenu du fichier à lire
+Fonctionnement : Appelle la fonction tokenize() pour découper le fichier en une liste de string contenant une question, puis appelle listQuestions() à partir de cette liste
+Sortie : AUCUNE
+*/
     parse(data) {
         var tData = this.tokenize(data)
         if (this.showTokenize) {
@@ -37,18 +49,36 @@ class GiftParser {
         this.listQuestions(tData)
     }
 
+/*
+Description : Appelle la fonction question() sur chaque élément de la liste *tData* donnée par parse() pour créer des objets Question
+Entrée : input ([String]) => liste de questions sous format texte gift
+Fonctionnement : forEach sur la liste pour appeler question() sur chaque élément
+Sortie : AUCUNE
+*/
     listQuestions(input) {
         input.forEach(element => {
             this.question(element);
         })
     }
 
+/*
+Description : Appelle la fonction body() pour obtenir les paramètres de l'objet Question, le créer, puis l'ajouter à la liste globale parsedQuestions
+Entrée : input (String) => texte d'une question au format gift
+Fonctionnement : trouve les arguments de Question() à l'aide de la fonction body, créé un objet Question et l'ajoute à parsedQuestions
+Sortie : AUCUNE
+*/
     question(input) {
         var args = this.body(input)
         var q = new Q(...Object.values(args))
         this.parsedQuestions.push(q)
     }
 
+/*
+Description : Est appelée pour retourner un message d'erreur si une fonctionnalité du parser ne fonctionne pas
+Entrée : msg (String) => message à écrire | input (String) => partie du fichier qui pose problème
+Fonctionnement : 
+Sortie : 
+*/
     errMsg(msg, input) {
         this.errorCount++;
 	    console.log(("Parsing Error ! on "+input+" -- msg : "+msg).red);
