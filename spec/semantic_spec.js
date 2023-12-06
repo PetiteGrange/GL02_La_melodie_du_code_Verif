@@ -25,7 +25,7 @@ describe("Program Semantic testing of Question", function(){
 
 	});
 
-	xit ("can compute average ratings", function(){
+	xit("can compute average ratings", function(){
 
 		expect(this.p.averageRatings()).toBe(2);
 	});
