@@ -76,23 +76,35 @@ Sortie : AUCUNE
 /*
 Description : Est appelée pour retourner un message d'erreur si une fonctionnalité du parser ne fonctionne pas
 Entrée : msg (String) => message à écrire | input (String) => partie du fichier qui pose problème
-Fonctionnement : 
-Sortie : 
+Fonctionnement : c'est un console.log()...
+Sortie : AUCUNE
 */
     errMsg(msg, input) {
         this.errorCount++;
 	    console.log(("Parsing Error ! on "+input+" -- msg : "+msg).red);
     }
 
+/*
+Description : retourne les arguments de l'objet Question correspondant au texte d'entrée sous forme de dictionnaire
+Entrée : input (String) => texte d'une question au format gift
+Fonctionnement : appelle les fonctions dédiées à chaque argument de la classe Question puis met leurs sorties dans un dictionnaire et le retourne
+Sortie : {"title": titre de la question (String), "text": énoncé de la question (String), "type" type de la question (QuestionType...), "answer" réponse de la question dépend de son type, "partialCredit": si la question a des crédits partiels (boolean))}
+*/
     body(input) {
         var ti = this.title(input)
         var pa = this.partialCredit(input)
-        var ty = this.type(input, pa)
+        var ty = this.type(input)
         var te = this.text(input, ty)
         var an = this.answer(input, ty, pa)
         return { "title": ti, "text": te, "type": ty, "answer": an, "partialCredit": pa }
     }
 
+/*
+Description : trouve le titre d'une question à partir de son texte
+Entrée : input (String) => texte d'une question au format gift
+Fonctionnement : prend ce qu'il y a entre les "::"
+Sortie : (String) => titre de la question
+*/
     title(input) {
         const startIndex = input.indexOf('::') + 2;
         const endIndex = input.lastIndexOf('::');
@@ -104,6 +116,12 @@ Sortie :
         }
     }
 
+/*
+Description : trouve l'énoncé d'une question à partir de son texte
+Entrée : input (String) => texte d'une question au format gift
+Fonctionnement : prend ce qui n'est ni entre "::" et entre "{}"
+Sortie : (String) => énoncé de la question
+*/
     text(input, ty) {
         let occurrence = 0;
         const bracketRegex = /\{[^}]+\}/g;
@@ -121,6 +139,12 @@ Sortie :
         }).trim();
     }
 
+/*
+Description : trouve le texte de la réponse à partir du texte de la question
+Entrée : input (String) => texte d'une question au format gift
+Fonctionnement : pour toutes les occurences de crochets, ajoute à une liste ce qu'il y a entre, puis retourne la liste
+Sortie : [String] => liste de texte de réponses (souvent, un seul élément dans la liste. Plusieurs éléments dans le cas des textes à trous par exemple)
+*/
     extractAnswers(input) {
         const regex = /{([^}]+)}/g
         const matches = []
@@ -138,8 +162,30 @@ Sortie :
         return matches
     }
 
+/*
+Description : donne le type 
+Entrée : 
+Fonctionnement : 
+Sortie : 
+*/
+    type(input) {
+        var matches = this.extractAnswers(input)
+        var types = []
 
-    findType(input, pa) {
+        matches.forEach(element => {
+            types.push(this.findType(element))
+        })
+
+        return types
+    }
+
+/*
+Description : TODO
+Entrée : TODO
+Fonctionnement : TODO
+Sortie : TODO
+*/
+    findType(input) {
         const reg1 = /#.*\.\..*/ //Format NUM_R
         const reg2 = /#.*\:.*/   //Format NUM_E
 
@@ -156,7 +202,7 @@ Sortie :
           } else if (input.includes("~") && input.includes("=")) {
             return QT.QCU;
         
-          } else if (input.includes("=")&& input.includes("->")) {
+          } else if (input.includes("=") && input.includes("->")) {
             return QT.ASSO;
           }else if (input.includes("=")) {
             return QT.TAT;
@@ -172,26 +218,19 @@ Sortie :
           }  else {
             return "error";
            }
-           
-
-        
     }
 
-    type(input, pa) {
-        var matches = this.extractAnswers(input)
-        var types = []
-
-        matches.forEach(element => {
-            types.push(this.findType(element, pa))
-        })
-
-        return types
-    }
-
+/*
+Description : trouve les réponses à partir du texte d'une question au format GIFT, du type de la question, et de partialCredits
+Entrée : input (String) => Texte de la réponse | type (TypeQuestion...) => type de la question | pa (boolean) => si elle a des crédits partiels
+Fonctionnement : appelle extractAnswers() sur le texte d'une question, puis appelle findAnswer() sur chacune des strings retournée par extractAnswers() et retourne le résultat
+Sortie : answers ([{dictionnaire de réponses dépendant du format de la question}])
+*/
     answer(input, type, pa) {
         var matches = this.extractAnswers(input)
         var answers = []
 
+        // Enlève le "#" au début des questions numériques
         matches.forEach((element, idx) => {
             if (element[0] == "#") {
                 matches[idx] = element.substring(1)
@@ -206,42 +245,66 @@ Sortie :
         return answers
     }
 
+/*
+Description : TODO
+Entrée : TODO
+Fonctionnement : TODO
+Sortie : TODO
+*/
     static keyCaracters = ["=", "~"]
     findAnswer(input, type, pa) {
         // Lit le contenu entre crochets envoyé dans "txt", et retourne les différentes réponses (vraies et fausses) envisagées ainsi que leur feedback s'il existe
-        function read(txt, accumulator = "", currentElement = "", elementsAccumulator = [], isFeedback = false, feedback = "") {
+        function read(txt, accumulator = "", currentElement = "", elementsAccumulator = [], currentField = "main", feedback = "", partialCredit = "") {
             if (txt.length === 0) {
                 var finalElement = {}
                 finalElement[currentElement] = accumulator
                 finalElement["feedback"] = feedback
+                if (pa) {
+                    if (partialCredit === "") {
+                        finalElement["partialCredit"] = 1.0
+                    } else {
+                        finalElement["partialCredit"] = parseFloat(partialCredit) / 100
+                    }
+                }
                 elementsAccumulator.push(finalElement)
+                console.log(elementsAccumulator)
                 return elementsAccumulator
             }
 
             var curCar = txt[0]
 
             if (GiftParser.keyCaracters.includes(curCar)) {
-                if (accumulator != "") {
+                if (accumulator.trim() != "") {
                     var element = {}
                     element[currentElement] = accumulator
                     element["feedback"] = feedback
                     elementsAccumulator.push(element)
                     accumulator = ""
                     feedback = ""
-                    isFeedback = false
+                    currentField = "main"
                 }
                 currentElement = curCar
             } else {
-                if (curCar == "#") {isFeedback = true}
-    
-                if (!isFeedback) {
-                    accumulator += curCar
+                if (curCar === "#") {
+                    currentField = "feedback"
+                } else if (curCar === "%") {
+                    if (currentField === "main") {
+                        currentField = "partialCredit"
+                    } else {
+                        currentField = "main"
+                    }
                 } else {
-                    feedback += curCar
+                    if (currentField === "main") {
+                        accumulator += curCar
+                    } else if (currentField === "feedback") {
+                        feedback += curCar
+                    } else if (pa && currentField === "partialCredit") {
+                        partialCredit += curCar
+                    }
                 }
             }
 
-            return read(txt.substring(1), accumulator, currentElement, elementsAccumulator, isFeedback, feedback)
+            return read(txt.substring(1), accumulator, currentElement, elementsAccumulator, currentField, feedback, partialCredit)
         }
 
         switch (type) {
@@ -260,8 +323,18 @@ Sortie :
         }
     }
 
+/*
+Description : Retourne si la question a des crédits partiels
+Entrée : input (String) => texte de la question
+Fonctionnement : extrait les réponses et si l'une d'entre elle contient le caractère '%', retourne vrai
+Sortie : (boolean) => vrai si la question a des crédits partiels
+*/
     partialCredit(input) {
-        return input.includes('%')
+        var ans = this.extractAnswers(input)
+        ans.forEach(element => {
+            if (element.includes('%')) {return true}
+        })
+        return false
     }
 
 }
