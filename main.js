@@ -60,7 +60,6 @@ program
 			analyzer.parse(data);
 			
 			console.log(analyzer.parsedQuestions);
-
 		});
     })
 

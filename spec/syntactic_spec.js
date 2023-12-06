@@ -34,9 +34,5 @@ describe("Program Syntactic testing of GiftParser", function(){
 		this.pEmptyRating.addRating(input);
 		// there is something missing here and this.pEmptyRating will certainly be usesul there
 		expect(this.pEmptyRating.ratings).toEqual([3,4]);
-
 	});
-
-
-
 });
