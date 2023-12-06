@@ -22,6 +22,15 @@ SPECF7 (Thibault) : Etablir le profil d'un examen montrant un histogramme des di
 SPECF8 (Thibault) : Comparer le profil d'un examen (SPECF7) avec le profil d'un ou plusieurs autres examens.
 */
 
+
+/*
+FORMAT PROPOSÉ POUR COMMENTER VOS BLOCS
+Description : ma fonction sert à ajouter "ONE PIECE" à une string
+Entrée : prend en entrée une string
+Fonctionnement : prend la string d'entrée et ajoute "ONE PIECE"
+Sortie : retourne la string d'entrée + "ONE PIECE"
+*/
+
 program
     .command('hello', 'says hello')
     .action(({logger}) => {
