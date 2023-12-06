@@ -27,13 +27,10 @@
 
             const answers = await inquirer.prompt([
                 {
-                    type: 'checkbox',
+                    type: 'list',
                     message: 'Sélectionnez les types de questions à afficher:',
                     name: 'types',
-                    choices: Object.keys(QT).map(key => ({
-                        name: `${key}: ${QT[key]}`, // Affichage de la clé et de sa description
-                        value: key // Utilisation de la clé comme valeur de retour
-                    }))
+                    choices: Object.values(QT)
                 }
             ]);
     
@@ -57,9 +54,9 @@
                                 console.error(err);
                             } else {
                                 const filteredQuestions = parsedQuestions.filter(question => {
-                                    console.log('Question Key:', question.key); // Assurez-vous que key est la clé de la question
+                                    console.log('Question Key:', question.type); // Assurez-vous que key est la clé de la question
                                     console.log('Selected Types:', selectedTypes);
-                                    const includesSelectedType = selectedTypes.includes(question.key); // Comparer avec la clé
+                                    const includesSelectedType = selectedTypes.includes(question.type); // Comparer avec la clé
                                     console.log('Includes Selected Type:', includesSelectedType);
                                     return includesSelectedType;
                                 });
