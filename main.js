@@ -59,13 +59,14 @@ program
 
 	.command('toQuestion', 'toQuestion')
 	.argument('<file>', 'The file to check')
+	.option('-t, --showTokenize', 'log the tokenization results', { validator: program.BOOLEAN, default: false })
 	.action(({args, options, logger}) => {
         fs.readFile(args.file, 'utf8', function (err,data) {
 			if (err) {
 				return logger.warn(err);
 			}
 	  
-			var analyzer = new GiftParser();
+			var analyzer = new GiftParser(options.showTokenize);
 			analyzer.parse(data);
 			
 			console.log(analyzer.parsedQuestions);
