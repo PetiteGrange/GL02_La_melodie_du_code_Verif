@@ -201,7 +201,7 @@ async function ouiNon() {
         {
             type: 'list',
             name: 'selectedTypes',
-            message: ' ';
+            message: ' ',
             choices: ['Oui','Non'],
         },
     ]);
