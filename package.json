@@ -1,12 +1,19 @@
 {
+  "name": "GL02_SujetB",
+  "version": "1.0.0",
+  "description": "Implémentation du cahier des charges du sujet B réalisé par l'équipe COAT.",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "author": "aurelien.julie@utt.fr, tibault.bisagni@utt.fr, marian.vigneron@utt.fr, ambrine.bencheikh@utt.fr",
+  "keywords": [],
   "dependencies": {
     "@caporal/core": "^2.0.7",
-    "canvas": "^2.11.2",
     "colors": "^1.4.0",
     "vega": "^5.26.1",
-    "vega-cli": "^5.26.1",
-    "vega-embed": "^6.23.0",
-    "vega-lite": "^5.16.3",
-    "vega-lite-api": "^5.6.0"
+    "vega-lite": "^4.17.0"
+  },
+  "devDependencies": {
+    "jasmine": "^3.99.0"
   }
 }

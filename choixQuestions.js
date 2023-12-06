@@ -1,3 +1,6 @@
+// Ce programme couvre les fonctionnalités 2 et 4 du cahier des charges
+
+
 // Importation des différentes features extérieures
 // nécessaires au fonctionnement du programme.
 
@@ -33,7 +36,7 @@ programme
     let questionnaire = [];
     questionnaireFini = false;
     let question;
-    let ajout = '';
+    let reponse = '';
     let questionARetirer;
     // Boucle while qui se termine quand l'utilisateur considère
     // qu'il a terminé de sélectionner les questions.
@@ -44,25 +47,37 @@ programme
       if (questionnaireFini == false) {
         // ...on vérifie que la question ne soit pas déjà dans le questionnaire.
         if (questionnaire.find(x => x.title == question.title)) {
-          console.log('\n\n\n------------------------------'.cyan);
+          // Si oui, on demande à l'utilisateur s'il veut la retirer.
+          console.log('\n\n------------------------------'.cyan);
           console.log(`Cette question fait déjà partie de votre questionnaire.`.brightCyan);
           console.log(`C'est la question n° ${questionnaire.findIndex(x => x.title == question.title)+1}`.brightCyan);
-          console.log('------------------------------\n\n\n'.cyan);
+          console.log('Souhaitez-vois la retirer ?'.brightCyan);
+          console.log('------------------------------\n\n'.cyan);
+          reponse = await ouiNon();
+          if (reponse == 'Oui') {
+            questionnaire.splice(questionnaire.findIndex(x => x.title == question.title),1);
+            console.log('\n\n------------------------------'.cyan);
+            console.log(`Vous avez retiré cette question au questionnaire. Le questionnaire a ${questionnaire.length} question(s).`.brightCyan);
+            console.log('------------------------------\n\n'.cyan);
+          }
         } else {
           // Sinon, on lui demande si il veut ajouter la question.
           console.log(question);
-          ajout = await ajoutQuestion();
+          console.log('\n\n------------------------------'.cyan);
+          console.log('Souhaitez-vous ajouter cette question ?'.brightCyan);
+          console.log('------------------------------\n\n'.cyan);
+          reponse = await ouiNon();
           // Si l'utilisateur veut ajouter la question...
-          if (ajout == 'Oui') {
+          if (reponse == 'Oui') {
             // ... on l'ajoute au questionnaire.
             questionnaire.push(question);
-            console.log('\n\n\n------------------------------'.cyan);
+            console.log('\n\n------------------------------'.cyan);
             console.log(`Vous avez ajouté cette question au questionnaire. Le questionnaire a ${questionnaire.length} question(s).`.brightCyan);
-            console.log('------------------------------\n\n\n'.cyan);
+            console.log('------------------------------\n\n'.cyan);
           } else {
-            console.log('\n\n\n------------------------------'.cyan);
+            console.log('\n\n------------------------------'.cyan);
             console.log(`Vous n'avez pas ajouté cette question au questionnaire. Le questionnaire a ${questionnaire.length} question(s).`.brightCyan);
-            console.log('------------------------------\n\n\n'.cyan);
+            console.log('------------------------------\n\n'.cyan);
           }
         }
       }
@@ -71,29 +86,42 @@ programme
         // alors le programme empêche la sortie de la boucle
         // et demande de sélectionner plus de questions.
         if (questionnaire.length < 15) {
-          console.log('\n\n\n------------------------------'.cyan);
+          console.log('\n\n------------------------------'.cyan);
           console.log (`Votre questionnaire est trop court (${questionnaire.length} questions). Veuillez en sélectionner plus pour en avoir au moins 15.`.brightYellow);
-          console.log('------------------------------\n\n\n'.cyan);
+          console.log('------------------------------\n\n'.cyan);
           questionnaireFini = false;
         }
         // Si on essaye de terminer le questionnaire alors qu'il est trop long
         // alors le programme demande d'enlever assez de questions
         // avant de sortir de la boucle.
         while (questionnaire.length > 20) {
-          console.log('\n\n\n------------------------------'.cyan);
-          console.log (`Votre questionnaire est trop long. Veillez retirer une questionon.`.brightYellow);
-          console.log('------------------------------\n\n\n'.cyan);
+          console.log('\n\n------------------------------'.cyan);
+          console.log ('Votre questionnaire est trop long. Veillez retirer une question.'.brightYellow);
+          console.log('------------------------------\n\n'.cyan);
           // Affichage d'une liste avec tous les titres des questions choisies
           // L'utilisateur choisit une par une les questions à retirer
           // jusqu'à ce qu'il en reste 20.
           questionARetirer = await retirerQuestion (questionnaire);
           questionnaire.splice(questionnaire.findIndex(x => x.text == questionARetirer),1)
         }
+        // Avant de sortir définitivement de la boucle,
+        // on affiche le questionnaire pour une dernière vérification.
+        console.log('------------------------------'.cyan);
+        console.log('Voici votre questionnaire'.brightCyan);
+        console.log('------------------------------'.cyan);
+        console.log(questionnaire);
+        console.log('\n\n------------------------------'.cyan);
+        console.log ('Voulez-vous modifier ce questionnaire ?'.brightYellow);
+        console.log('------------------------------\n\n'.cyan);
+        reponse = await ouiNon();
+        if (reponse == 'Oui') {
+          questionnaireFini = false;
+        }
       }
     }
     // Une fois que le questionnaire est fini, on l'affiche.
     console.log('------------------------------'.cyan);
-    console.log('Voici votre questionnaire'.cyan);
+    console.log('Voici votre questionnaire'.brightCyan);
     console.log('------------------------------'.cyan);
     console.log(questionnaire);
   });
@@ -168,12 +196,12 @@ async function choixQuestion(questions) {
 
 // Cette fonction utilise l'inquirer pour permettre à l'utilisateur
 // de confirmer l'ajout d'une question au questionnaire.
-async function ajoutQuestion() {
+async function ouiNon() {
     const answers = await inquirer.prompt([
         {
             type: 'list',
             name: 'selectedTypes',
-            message: 'Voulez-vous ajouter cette question au questionnaire ?',
+            message: ' ',
             choices: ['Oui','Non'],
         },
     ]);
