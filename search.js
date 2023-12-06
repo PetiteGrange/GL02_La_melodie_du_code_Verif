@@ -8,46 +8,66 @@
     const path = require('path');  //chemin absolu pour faciliter l'ecriture de chemins
     const directoryPath = path.join('data');
 
-const Question = require('./Question.js');
-const filterQuestions = require('./filterQuestions');
-const QT = require('./QuestionType.js')
-const askForFileTypes = require('./askQuestionType');
+    const Question = require('./Question.js');  
+    const QT = require('./QuestionType.js')  //importation de QuestionType pour avoir les différents type des questions
+    const GiftParser = require('./GiftParser.js');  //importation de GiftParser pour parser un fichier en questions
 
-function filterQuestionsByTypes(parsedQuestions, selectedTypes) {
-    return parsedQuestions.filter(question => selectedTypes.includes(question.type));
-}
+    const inquirer = require('inquirer'); // Ajout du module inquirer pour l'interface interactive
 
-program
-    .command('searchf', 'permet de rechercher un fichier parmi la base de données')
-    .argument('[name...]', 'nom du ou des fichiers')
-    .option('-n, --word <word>', 'le nom du fichier contient "word"')
-    .option('-c, --expression <expresssion>', "le fichier que l'on veut afficher contient 'expression'")
-    .action(({args, options, logger}) =>{
-        askForFileTypes((selectedTypes) => {
-            console.log('Types de fichiers sélectionnés dans app.js :', selectedTypes);
-        });
-        if (args.name) {
-            args.name.forEach(filename => {  //pour chaque fichier dont le nom a été entré par l'utilisateur
-                const filePath = path.join('data', filename);  //création du chemin
-                fs.readFileSync(filePath, 'utf-8', (err, content) => {  //lecture du fichier
-                    if (err) {
-                        return console.log('Unable to scan file ' + filename + ': ' + err + '\n');
-                    }
-                    console.log("\n--------------------------------------------".green)
-                    console.log('name of the file:', filename.green); //affichage du nom 
-                    console.log("--------------------------------------------".green,'\n')
-                    console.log(content + '\n');  //affichage du contenu 
-        
-                    mainModule.toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+
+
+
+
+    program
+        .command('searchf', 'permet de rechercher un fichier parmi la base de données')
+        .argument('[name...]', 'nom du ou des fichiers')
+        .option('-n, --word <word>', 'le nom du fichier contient "word"')
+        .option('-c, --expression <expresssion>', "le fichier que l'on veut afficher contient 'expression'")
+        .action(async({args, options, logger}) =>{
+
+            const answers = await inquirer.prompt([
+                {
+                    type: 'list',
+                    message: 'Sélectionnez les types de questions à afficher:',
+                    name: 'types',
+                    choices: Object.values(QT)
+                }
+            ]);
+    
+            const selectedTypes = answers.types;
+            console.log(selectedTypes)
+
+            if (args.name) {
+                args.name.forEach(filename => {  //pour chaque fichier dont le nom a été entré par l'utilisateur
+                    const filePath = path.join('data', filename);  //création du chemin
+                    fs.readFile(filePath, 'utf-8', (err, content) => {  //lecture du fichier
                         if (err) {
-                            console.error(err);
-                        } else {
-                            console.log(parsedQuestions)
+                            return console.log('Unable to scan file ' + filename + ': ' + err + '\n');
                         }
+                        console.log("\n--------------------------------------------".green)
+                        console.log('name of the file:', filename.green); //affichage du nom 
+                        console.log("--------------------------------------------".green,'\n')
+                        console.log(content + '\n');  //affichage du contenu 
+            
+                        toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+                            if (err) {
+                                console.error(err);
+                            } else {
+                                const filteredQuestions = parsedQuestions.filter(question => {
+                                    console.log('Question Key:', question.type); // Assurez-vous que key est la clé de la question
+                                    console.log('Selected Types:', selectedTypes);
+                                    const includesSelectedType = selectedTypes.includes(question.type); // Comparer avec la clé
+                                    console.log('Includes Selected Type:', includesSelectedType);
+                                    return includesSelectedType;
+                                });
+                                
+                                console.log('Filtered Questions:', filteredQuestions);
+                                console.log(parsedQuestions)
+                            }
+                        });
                     });
                 });
-            });
-        }
+            }
 
             fs.readdir(directoryPath, function (err, files) {
 
@@ -58,55 +78,86 @@ program
                 
                 files.forEach(function(file){  //pour tous les fichiers, on regarde quelle option a été choisie
 
-                if(options.n && file.includes(options.n)){
-                    console.log(`Files with name containing "${options.n}": ${file}`.red);
-                    const filePath = path.join('data', file);
-                    fs.readFile(filePath, 'utf-8', function(err, content) {
-                        if (err) {  // afficher les erreurs
-                          return console.log('Unable to scan file '+file+': '+err+'\n');
-                        }
-                        console.log("\n--------------------------------------------".green)
-                        console.log('name of the file:', file.green); //affichage du nom 
-                        console.log("--------------------------------------------".green,'\n')
-                        console.log(content + '\n');  //affichage du contenu 
-            
-                        mainModule.toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
-                            if (err) {
-                                console.error(err);
-                            } else {
-                                console.log(parsedQuestions)
+                    if(options.n && file.includes(options.n)){
+                        console.log(`Files with name containing "${options.n}": ${file}`.red);
+                        const filePath = path.join('data', file);
+                        fs.readFile(filePath, 'utf-8', function(err, content) {
+                            if (err) {  // afficher les erreurs
+                            return console.log('Unable to scan file '+file+': '+err+'\n');
                             }
-                        });
-                        //console.log(content + '\n'); 
-                    })
-                }  
+                            console.log("\n--------------------------------------------".green)
+                            console.log('name of the file:', file.green); //affichage du nom 
+                            console.log("--------------------------------------------".green,'\n')
+                            console.log(content + '\n');  //affichage du contenu 
                 
-                if (options.c) {
-                    const filePath = path.join('data', file);
-                    fs.readFile(filePath, 'utf-8', function (err, content) {
-                        if (err) {
-                            return console.log('Unable to scan file ' + file + ': ' + err + '\n');
-                        }
-                        // Vérification si le contenu du fichier contient l'expression spécifiée
-                        if (content.includes(options.c)) {
-                            console.log(`Le fichier ${file} contient l'expression "${options.c}".`);
-                
-                            // Vous pouvez également ajouter ici la logique pour traiter le fichier si nécessaire
-                            mainModule.toQuestion(filePath, (err, parsedQuestions) => {
+                            toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
                                 if (err) {
                                     console.error(err);
                                 } else {
-                                    console.log(parsedQuestions);
+                                    const filteredQuestions = parsedQuestions.filter(question => {
+                                        console.log('Question Key:', question.type); // Assurez-vous que key est la clé de la question
+                                        console.log('Selected Types:', selectedTypes);
+                                        const includesSelectedType = selectedTypes.includes(question.type); // Comparer avec la clé
+                                        console.log('Includes Selected Type:', includesSelectedType);
+                                        return includesSelectedType;
+                                    });
+                                    
+                                    console.log('Filtered Questions:', filteredQuestions);
+                                    console.log(parsedQuestions)
                                 }
-                            });
-                        }
-                    });
-                }
+                            }); 
+                        })
+                    }  
+                    
+                    if (options.c) {
+                        const filePath = path.join('data', file);
+                        fs.readFile(filePath, 'utf-8', function (err, content) {
+                            if (err) {
+                                return console.log('Unable to scan file ' + file + ': ' + err + '\n');
+                            }
+                            // Vérification si le contenu du fichier contient l'expression spécifiée
+                            if (content.includes(options.c)) {
+                                console.log(`Le fichier ${file} contient l'expression "${options.c}".`);
+                    
+                                // Vous pouvez également ajouter ici la logique pour traiter le fichier si nécessaire
+                                toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+                                    if (err) {
+                                        console.error(err);
+                                    } else {
+                                        const filteredQuestions = parsedQuestions.filter(question => {
+                                            console.log('Question Key:', question.type); // Assurez-vous que key est la clé de la question
+                                            console.log('Selected Types:', selectedTypes);
+                                            const includesSelectedType = selectedTypes.includes(question.type); // Comparer avec la clé
+                                            console.log('Includes Selected Type:', includesSelectedType);
+                                            return includesSelectedType;
+                                        });
+                                        
+                                        console.log('Filtered Questions:', filteredQuestions);
+                                        console.log(parsedQuestions)
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
             })
+
         })
+        
 
-    })
 
+    function toQuestion(file, callback) {
+        fs.readFile(file, 'utf8', (err, data) => {
+            if (err) {
+                return callback(err, null);
+            }
+
+            const analyzer = new GiftParser();
+            analyzer.parse(data);
+
+            callback(null, analyzer.parsedQuestions);
+        });
+    }
+        
     
-  
-program.run(process.argv.slice(2));
+    program.run(process.argv.slice(2));
