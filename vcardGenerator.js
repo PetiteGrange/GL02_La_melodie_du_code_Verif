@@ -3,13 +3,6 @@ const path = require('path');  //require path pour avoir un chemin absolu
 const readline = require('readline');  //require readline pour pouvoir lire les entrées de l'utilisateur 
 
 /*
-Description : Appelle la fonction question() sur chaque élément de la liste *tData* donnée par parse() pour créer des objets Question
-Entrée : input ([String]) => liste de questions sous format texte gift
-Fonctionnement : forEach sur la liste pour appeler question() sur chaque élément
-Sortie : AUCUNE
-*/
-
-/*
 Description : Fonction de vérification du format d'un email
 Entrée : email (String) => email à vérifier
 Fonctionnement : compare les caractères de l'email avec ceux acceptés et/ou nécessaires
