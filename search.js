@@ -30,7 +30,7 @@
             ]);
     
             const selectedTypes = answers.types;
-            console.log(selectedTypes)
+            console.log('\n')
 
             if (args.name) {  //dans le cas ou on a rentré le nom ou les noms de fichiers, on va parser les questions de chaque fichiers, et afficher celle avec le type correpondant au choix de l'utilisateur
                 args.name.forEach(filename => {  //pour chaque fichier dont le nom a été entré par l'utilisateur
@@ -49,7 +49,7 @@
                                     return includesSelectedType;
                                 });
                                 
-                                console.log('\nQuestions dont le type correspond à votre choix'.red + filename.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
+                                console.log('\nQuestions dont le type correspond à votre choix dans '.red + filename.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
                             }
                         });
                     });
@@ -65,11 +65,11 @@
                 files.forEach(function(file){  //pour tous les fichiers du dossier, deux choix s'ouvrent
 
                     if(options.n && file.includes(options.n)){  //si l'option -n a été ajoutée, et que le nom du fichier contient 'word'
-                        console.log(`Files with name containing "${options.n}": ${file}`.red);
+                        console.log(`Fichiers dont le nom contient "${options.n}": ${file}`.red);
                         const filePath = path.join('data', file);  //création du chemin
                         fs.readFile(filePath, 'utf-8', function(err, content) {  //lecture du fichier
                             if (err) {
-                            return console.log('Unable to scan file '+file+': '+err+'\n');  //gestion des erreurs
+                            return console.log('Impossible de scanner le fichier '+file+': '+err+'\n');  //gestion des erreurs
                             }
                             toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
                                 if (err) {
@@ -80,7 +80,7 @@
                                         return includesSelectedType;
                                     });
                                     
-                                    console.log('\nQuestions with matching types from '.red + file.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
+                                    console.log('\nQuestions dont le type correspond à votre choix dans '.red + file.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
                                 }
                             }); 
                         })
@@ -90,7 +90,7 @@
                         const filePath = path.join('data', file);  //création du chemin
                         fs.readFile(filePath, 'utf-8', function (err, content) {  //lecture du fichier
                             if (err) {
-                                return console.log('Unable to scan file ' + file + ': ' + err + '\n');  //gestion des erreurs
+                                return console.log('Impossible de scanner le fichier ' + file + ': ' + err + '\n');  //gestion des erreurs
                             }
 
                             if (content.includes(options.c)) {  //on vérifie que le contenue contient 'expression'
@@ -105,7 +105,7 @@
                                             return includesSelectedType;
                                         });
                                         
-                                        console.log('\nQuestions with matching types from '.red + file.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
+                                        console.log('\nQuestions dont le type correspond à votre choix dans '.red + file.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
 
                                     }
                                 });
@@ -126,13 +126,13 @@
                 fs.readdir(directoryPath, function (err, files) {  //lecture de tout le dossier
                     console.log(files)
                     if (err) {
-                        return console.log('Unable to scan directory: ' + err); //gestion des erreurs
+                        return console.log('Impossible de scanner le dossier: ' + err); //gestion des erreurs
                     }
                     files.forEach(function (file) {  
                         const filePath = path.join('data', file);  //création du chemin
                         fs.readFile(filePath, 'utf-8', function (err, content) {  //lecture du fichier
                             if (err) {  
-                                return console.log('Unable to scan file ' + file + ': ' + err + '\n');  //gestion des erreurs
+                                return console.log('Impossible de scanner le fichier ' + file + ': ' + err + '\n');  //gestion des erreurs
                             }
                             toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
                                 if (err) {
@@ -149,7 +149,7 @@
                     const filePath = path.join('data', filename);  //création du chemin
                     fs.readFile(filePath, 'utf-8', (err, content) => {  //lecture du fichier
                         if (err) {
-                            return console.log('Unable to scan file ' + filename + ': ' + err + '\n');  //gestion des erreurs
+                            return console.log('Impossible de scanner le fichier ' + filename + ': ' + err + '\n');  //gestion des erreurs
                         }
 
                         toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
