@@ -1,5 +1,4 @@
-    // Importation des différentes features extérieures
-    // nécessaires au fonctionnement du programme.
+    // Importation des différentes features extérieures nécessaires au fonctionnement du programme.
 
     const fs = require('fs');  // fs sert à lire les dossiers et fichiers.
     const program = require("@caporal/core").default;  //importation de caporal pour créer des commandes
@@ -14,15 +13,11 @@
 
     const inquirer = require('inquirer'); // Ajout du module inquirer pour l'interface interactive
 
-
-
-
-
     program
-        .command('searchf', 'permet de rechercher un fichier parmi la base de données')
+        .command('searchf', "permet de rechercher un ou des fichiers parmi la base de données, et d'afficher les questions de ces fichiers avec le type choisi")
         .argument('[name...]', 'nom du ou des fichiers')
-        .option('-n, --word <word>', 'le nom du fichier contient "word"')
-        .option('-c, --expression <expresssion>', "le fichier que l'on veut afficher contient 'expression'")
+        .option('-n, --word <word>', "permet d'afficher les ou les fichiers dont le nom contient 'word'")
+        .option('-c, --expression <expresssion>', "permet d'afficher les ou les fichiers dont le contenu contient 'expression'")
         .action(async({args, options, logger}) =>{
 
             const answers = await inquirer.prompt([
@@ -44,25 +39,17 @@
                         if (err) {
                             return console.log('Unable to scan file ' + filename + ': ' + err + '\n');
                         }
-                        console.log("\n--------------------------------------------".green)
-                        console.log('name of the file:', filename.green); //affichage du nom 
-                        console.log("--------------------------------------------".green,'\n')
-                        console.log(content + '\n');  //affichage du contenu 
             
                         toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
                             if (err) {
                                 console.error(err);
                             } else {
                                 const filteredQuestions = parsedQuestions.filter(question => {
-                                    console.log('Question Key:', question.type); // Assurez-vous que key est la clé de la question
-                                    console.log('Selected Types:', selectedTypes);
                                     const includesSelectedType = selectedTypes.includes(question.type); // Comparer avec la clé
-                                    console.log('Includes Selected Type:', includesSelectedType);
                                     return includesSelectedType;
                                 });
                                 
-                                console.log('Filtered Questions:', filteredQuestions);
-                                console.log(parsedQuestions)
+                                console.log('Filtered Questions from' + filename + ':', filteredQuestions);
                             }
                         });
                     });
@@ -85,25 +72,16 @@
                             if (err) {  // afficher les erreurs
                             return console.log('Unable to scan file '+file+': '+err+'\n');
                             }
-                            console.log("\n--------------------------------------------".green)
-                            console.log('name of the file:', file.green); //affichage du nom 
-                            console.log("--------------------------------------------".green,'\n')
-                            console.log(content + '\n');  //affichage du contenu 
-                
                             toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
                                 if (err) {
                                     console.error(err);
                                 } else {
                                     const filteredQuestions = parsedQuestions.filter(question => {
-                                        console.log('Question Key:', question.type); // Assurez-vous que key est la clé de la question
-                                        console.log('Selected Types:', selectedTypes);
                                         const includesSelectedType = selectedTypes.includes(question.type); // Comparer avec la clé
-                                        console.log('Includes Selected Type:', includesSelectedType);
                                         return includesSelectedType;
                                     });
                                     
-                                    console.log('Filtered Questions:', filteredQuestions);
-                                    console.log(parsedQuestions)
+                                    console.log('\nFiltered Questions from '+ file + ':', filteredQuestions);
                                 }
                             }); 
                         })
@@ -117,7 +95,7 @@
                             }
                             // Vérification si le contenu du fichier contient l'expression spécifiée
                             if (content.includes(options.c)) {
-                                console.log(`Le fichier ${file} contient l'expression "${options.c}".`);
+                                console.log(`Le fichier ${file} contient l'expression "${options.c}".`.red);
                     
                                 // Vous pouvez également ajouter ici la logique pour traiter le fichier si nécessaire
                                 toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
@@ -125,15 +103,12 @@
                                         console.error(err);
                                     } else {
                                         const filteredQuestions = parsedQuestions.filter(question => {
-                                            console.log('Question Key:', question.type); // Assurez-vous que key est la clé de la question
-                                            console.log('Selected Types:', selectedTypes);
                                             const includesSelectedType = selectedTypes.includes(question.type); // Comparer avec la clé
-                                            console.log('Includes Selected Type:', includesSelectedType);
                                             return includesSelectedType;
                                         });
                                         
-                                        console.log('Filtered Questions:', filteredQuestions);
-                                        console.log(parsedQuestions)
+                                        console.log('\nFiltered Questions' + file + ':', filteredQuestions);
+
                                     }
                                 });
                             }
@@ -143,8 +118,12 @@
             })
 
         })
-        
 
+        .command('displayf', "permet d'afficher toutes les fichiers d'ou ou de plusieurs fichiers, sans critères")
+        .argument('[file...]', "nom du ou des fichiers que l'on veut afficher")
+        .action((args, logger) => {
+            
+        })
 
     function toQuestion(file, callback) {
         fs.readFile(file, 'utf8', (err, data) => {
@@ -159,5 +138,4 @@
         });
     }
         
-    
     program.run(process.argv.slice(2));
