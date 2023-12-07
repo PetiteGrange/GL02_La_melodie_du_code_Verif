@@ -29,6 +29,15 @@ const programme = require('@caporal/core').default;
 // modifiée depuis plusieurs fonctions.
 let questionnaireFini;
 
+
+
+/*
+Description : La commande créerQuestionnaire permet à l'utilisateur de créer
+un questionnaire conforme aux règles imposées par la specification 4.
+Entrée : ne prend rien en entrée.
+Fonctionnement : expliqué en détail dans la commande.
+Sortie : ne retourne rien.
+*/
 programme
   .command('créerQuestionnaire', 'Afficher les différents fichiers disponibles contenant des questions')
   .action(async function () {
@@ -126,6 +135,18 @@ programme
     console.log(questionnaire);
   });
 
+
+/*
+Description : selectQuestion sert à permettre à l'utilisateur de sélectionner
+une question dans la base de données.
+Entrée : ne prend rien en entrée
+Fonctionnement : ouvre le dossier data dans le répertoire du projet,
+y lit les différents fichiers, propose à l'utilisateur de sélectionner
+le fichier à ouvrir, ouvre le fichier sélectionné, y lit les différentes
+questions grâce au parseur, les propose à l'utilisateur pour sélection.
+Sortie : retourne la question choisie par l'utilisateur sous la forme
+d'un objet
+*/
 async function selectQuestion() {
   // Gestion des erreurs en mettant toute la fonction dans un 'try'
   try {
@@ -159,9 +180,16 @@ async function selectQuestion() {
 
 }
 
-// Cette fonction utilise l'inquirer pour permettre à l'utilisateur
-// de faire un choix parmi les fichiers de la base de données.
-// On ajoute l'option 'Terminer' pour finir la sélection.
+
+/*
+Description : choixFichier utilise un inquirer pour permettre à l'utilisateur
+de faire un choix parmi les fichiers de la base de données.
+Entrée : prend la liste des fichiers en entrée
+Fonctionnement : ajoute 'Terminer' dans la liste pour en faire une option qui
+permettra à l'utilisateur de terminer sa sélection, puis appelle l'inquirer
+pour laisser l'utilisateur faire son choix.
+Sortie : retourne la sélection, donc soit un nom de fichier soit 'Terminer'.
+*/
 async function choixFichier(choix) {
     if (choix[choix.length-1] != 'Terminer') {choix.push('Terminer');}
     const answers = await inquirer.prompt([
@@ -176,9 +204,16 @@ async function choixFichier(choix) {
     return answers.selectedTypes;
 }
 
-// Cette fonction utilise l'inquirer pour permettre à l'utilisateur
-// de faire un choix parmi les différentes questions d'un fichier.
-// Ce choix se fait parmi les titres des questions.
+/*
+Description : choixQuestion utilise un inquirer pour permettre
+à l'utilisateur de faire un choix parmi les questions du fichier
+ouvert dans la fonction principale.
+Entrée : prend la liste des questions en entrée
+Fonctionnement : transforme la liste d'objet en une liste de strings
+contenant le nom de chaque question, puis appelle l'inquirer
+pour laisser l'utilisateur faire son choix.
+Sortie : retourne la sélection, donc le nom d'une question.
+*/
 async function choixQuestion(questions) {
   let choix = [];
   questions.forEach((i) => choix.push(i.title));
@@ -186,7 +221,7 @@ async function choixQuestion(questions) {
     {
       type: 'list',
       name: 'selectedTypes',
-      message: 'Choisissez le numéro de question que vous voulez visionner :',
+      message: 'Choisissez la question que vous voulez visionner :',
       choices: choix,
     },
   ]);
@@ -194,8 +229,13 @@ async function choixQuestion(questions) {
   return answers.selectedTypes;
 }
 
-// Cette fonction utilise l'inquirer pour permettre à l'utilisateur
-// de confirmer l'ajout d'une question au questionnaire.
+/*
+Description : ouiNon permet à l'utilisateur de répondre à une question
+par 'Oui' ou 'Non'.
+Entrée : ne prend rien en entrée
+Fonctionnement : appelle l'inquirer pour laisser l'utilisateur faire son choix.
+Sortie : retourne la sélection, donc 'Oui' ou 'Non'.
+*/
 async function ouiNon() {
     const answers = await inquirer.prompt([
         {
@@ -208,8 +248,15 @@ async function ouiNon() {
     return answers.selectedTypes;
 }
 
-// Cette fonction utilise l'inquirer pour permettre à l'utilisateur
-// de sélectionner une question à retirer du questionnaire.
+/*
+Description : retirerQuestion utilise un inquirer pour permettre à
+l'utilisateur de faire un choix parmi une liste de question afin de la retirer.
+Entrée : prend une liste des questions en entrée
+Fonctionnement : transforme la liste d'objet en une liste de strings
+contenant le nom de chaque question, puis appelle l'inquirer
+pour laisser l'utilisateur faire son choix.
+Sortie : retourne la sélection, donc le nom d'une question.
+*/
 async function retirerQuestion(questions) {
   let choix = [];
   questions.forEach((i) => choix.push(i.title));
@@ -224,8 +271,16 @@ async function retirerQuestion(questions) {
     return answers.selectedTypes;
 }
 
-// Cette fonction utilise le GiftParser pour transformer un fichier
-// en différents objets, chacun représentant une question.
+/*
+Description : giftToQuestion permet au programme d'appeler le GiftParser
+afin de transformer un texte en format GIFT en objets, chacun correspondant
+à une question.
+Entrée : prend du texte en entrée.
+Fonctionnement : transforme la liste d'objet en une liste de strings
+contenant le nom de chaque question, puis appelle l'inquirer
+pour laisser l'utilisateur faire son choix.
+Sortie : retourne une liste d'objets.
+*/
 async function giftToQuestion(data) {
   const analyzer = new GiftParser();
   analyzer.parse(data);

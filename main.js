@@ -12,7 +12,7 @@ Lien vers le tuto caporal => https://caporal.io/guide/
 Lien vers doc format GIFT => https://docs.moodle.org/403/en/GIFT_format
 
 Rappel des SPECS : 
-SPECF1 (Marian) : L'enseignant recherche et visualise une question à partir de la banque
+SPECF1 (Marian) : L'enseignant recherche et visualise une question à partir de la banque !! DONE !!
 SPECF2 (Ambrine) : L'enseignant sélectionne plusieurs questions en respectant les règles données (SPECF4)
 SPECF3 (Aurélien) : L'enseignant créé un fichier d'examen GIFT à partir des questions sélecionnées (SPECF2)
 SPECF4 (Ambrine) : Vérifier qu'un ensemble de questions respecte la qualité des données soit, l'ensemble comporte entre 15 et 20 questions toutes uniques

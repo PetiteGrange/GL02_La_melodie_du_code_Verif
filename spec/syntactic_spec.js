@@ -2,34 +2,22 @@ describe("Program Syntactic testing of GiftParser", function(){
 
 	beforeAll(function() {
 		const Q = require('../Question');
-
 		const Parser = require('../GiftParser');
 		this.analyzer = new Parser();
-
-		this.qempty = new q;
-
 	});
 
-	xit("can read an answer for a question", function(){
-
-		let input = ["Very {=ambitious} (<i>ambition</i>) people are more likely to be disappointed in life.","QUESTION_TEXT_A_TROUS", false];
-		expect(this.analyzer.name(input)).toBe("Café d'Albert");
-
+	it("peut tokenizer le texte d'un fichier", function(){
+		let input = "::EM U4 p33 Review 4.5 boring::[html]I get bored by people who talk too much.<br>\n<b>FIND</b><br>\nI {=find it boring#change of adjective form: bored – boring} when people talk too much.\n\n::EM U4 p33 Review 4.6 for the first time::[html]I had never seen a glacier before I went to Norway<br>\n<b>I</b><br>\nWhen I was in Norway, {=I saw a glacier for#I had never seen – I saw ... for the first time} the first time.";
+		expect(this.analyzer.tokenize(input)).toEqual(["::EM U4 p33 Review 4.5 boring::[html]I get bored by people who talk too much.<br>\n<b>FIND</b><br>\nI {=find it boring#change of adjective form: bored – boring} when people talk too much.","::EM U4 p33 Review 4.6 for the first time::[html]I had never seen a glacier before I went to Norway<br>\n<b>I</b><br>\nWhen I was in Norway, {=I saw a glacier for#I had never seen – I saw ... for the first time} the first time."]);
 	});
 
 
 	xit("can find the type of a question", function(){
-
-		let input = ["Complete this sentence to summarise the writer’s main point.</b>\n<p>Socal media encourages people to...</p>{\n~get a false impression of the celebrities they follow.\n~have unrealistic hopes for their own futures.\n~=become too focused on the opinion others have of them.}"];
-		expect(this.analyzer.latlng(input)).toEqual({ lat: "48.866205" , lng: "2.399279" });
-
-		let inputNew = ["latlng", "-50.463534;3.113125"]
-		expect(this.analyser.latlng(inputNew)).toEqual({ lat: "-50.463534" , lng: "3.113125" });
-
+		let input =
+		expect(this.analyser.type(input)).toEqual('');
 	});
 
 	xit("can read several rankings for a POI from a simulated input", function(){
-
 		let input = [3,4,6];
 		this.pEmptyRating.addRating(input);
 		// there is something missing here and this.pEmptyRating will certainly be usesul there
