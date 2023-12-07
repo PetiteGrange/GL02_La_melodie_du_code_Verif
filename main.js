@@ -69,7 +69,7 @@ program
 			var analyzer = new GiftParser(options.showTokenize);
 			analyzer.parse(data);
 			
-			console.log(analyzer.parsedQuestions);
+			// console.log(analyzer.parsedQuestions);
 		});
     })
 

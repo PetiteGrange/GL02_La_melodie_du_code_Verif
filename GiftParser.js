@@ -254,11 +254,11 @@ Sortie : TODO
     static keyCaracters = ["=", "~"]
     findAnswer(input, type, pa) {
         // Lit le contenu entre crochets envoyé dans "txt", et retourne les différentes réponses (vraies et fausses) envisagées ainsi que leur feedback s'il existe
-        function read(txt, accumulator = "", currentElement = "", elementsAccumulator = [], currentField = "main", feedback = "", partialCredit = "") {
+        function read(txt, accumulator = "", currentElement = "=", elementsAccumulator = [], currentField = "main", feedback = "", partialCredit = "") {
             if (txt.length === 0) {
                 var finalElement = {}
-                finalElement[currentElement] = accumulator
-                finalElement["feedback"] = feedback
+                finalElement[currentElement] = accumulator.trim()
+                finalElement["feedback"] = feedback.trim()
                 if (pa) {
                     if (partialCredit === "") {
                         finalElement["partialCredit"] = 1.0
@@ -276,8 +276,8 @@ Sortie : TODO
             if (GiftParser.keyCaracters.includes(curCar)) {
                 if (accumulator.trim() != "") {
                     var element = {}
-                    element[currentElement] = accumulator
-                    element["feedback"] = feedback
+                    element[currentElement] = accumulator.trim()
+                    element["feedback"] = feedback.trim()
                     elementsAccumulator.push(element)
                     accumulator = ""
                     feedback = ""
@@ -331,9 +331,11 @@ Sortie : (boolean) => vrai si la question a des crédits partiels
 */
     partialCredit(input) {
         var ans = this.extractAnswers(input)
-        ans.forEach(element => {
-            if (element.includes('%')) {return true}
-        })
+        for (let i = 0; i < ans.length; i++) {
+            if (ans[i].includes('%')) {
+                return true;
+            }
+        }
         return false
     }
 
