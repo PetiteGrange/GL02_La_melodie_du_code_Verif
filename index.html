@@ -7,7 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/vega@5.25.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.16.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2"></script>
+   
     <script src="histoQuestionaire.js"> </script>
+    
         
 
     <style media="screen">
@@ -20,64 +22,550 @@
   <body>
     <h1>Le nombre de question dans un questionaire en fonction de son type </h1>
     <!-- Container for the visualization -->
-    <div id="vis"></div>
+    <h3>Votre questionaire</h3>
+    <form id="fileForm">
+        <label for="fileInput">Sélectionnez un fichier :</label>
+        <input type="file" id="fileInput"  onchange="loadFile()" />
+        
+      </form>
+    
+      <div id="vis"></div>
+      <h3>Dossier(s) pour la comparaison</h3>
+      <form id="fileForm">
+        <label for="fileInput2">Sélectionnez un ou plusieurs fichier :</label>
+        <input type="file" id="fileInput2"  onchange="traiterFichiers()" multiple/>
+        
+
+      </form>
+      
+    <div id="vis2"></div>
+    <h3>Résultat de la comparaison</h3>
+    <button onclick="commparer()">Comparer</button>
+    
+    <div id="vis3"></div>
+    <div id="result"></div>
+    
 
     <script>
-      const vlSpec = histogramme("data");
+      var vlSpecFiles;
+      var vlSpecYourQ;
+
       
 
-        /*
-      vlSpec = {
-        $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-        "data": {        
-            values: [
-            { 'Type Question': "EXAMPLE" },
-            { 'Type Question': 'EXAMPLE' },
-            { 'Type Question': 'MOT MANQUANT' },
-            { 'Type Question': 'MOT MANQUANT' },
-            { 'Type Question': 'MOT MANQUANT' }
+      function traiterFichiers() {
+            var input = document.getElementById('fileInput2');
+            var files = input.files;
+            const valuesJSON = [];
 
-          ]
+            if (files.length > 0) {
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    
+                    
+                    var reader = new FileReader();
 
-        },
-      "mark": "bar",
-      "encoding": {
-        "x": {"field": 'Type Question', "type": "nominal"},
-        "y": {"aggregate" : "count", "field": "b", "type": "quantitative"}
-      }
-    }
-    //*/
+                    reader.onload = function (e) {
+                    // Le contenu du fichier est accessible ici
+                    var content = e.target.result;
+                    //document.getElementById("result").innerText = JSON.stringify(valuesJSON) ;
+          
+                    var analyzer = new GiftParser2(false);         
+                    analyzer.parse(content);
+                    valuesJSONComplet= analyzer.parsedQuestions;
+          
+                    valuesJSONComplet.forEach(question => {
+                      valuesJSON.push({"Type Question": question.type[0],"origine":"Base De Donnée"})
+                    } )
 
+                    vlSpecFiles = toJson(valuesJSON)
 
+                    vegaEmbed('#vis2', vlSpecFiles);
 
-      /*
-      vlSpec = {
-        $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
-        "data": {        
-            values: [
-            {a: 'C', b: 2},
-            {a: 'C', b: 7},
-            {a: 'C', b: 4},
-            {a: 'D', b: 1},
-            {a: 'D', b: 2},
-            {a: 'D', b: 6},
-            {a: 'E', b: 8},
-            {a: 'E', b: 4},
-            {a: 'E', b: 7}
-          ]
+                    //document.getElementById("result").innerText = JSON.stringify(valuesJSON) ;
+          
+                    
+                    };
 
-        },
-      "mark": "bar",
-      "encoding": {
-        "x": {"field": "a", "type": "nominal"},
-        "y": {"aggregate" : "count", "field": "b", "type": "quantitative"}
-      }
-    }
-    //*/
-
-      // Embed the visualization in the container with id `vis`
+                    reader.readAsText(file);
+                    //document.getElementById("result").innerText = JSON.stringify(reader.onload ) ;
+                    
+                }
+            } else {
+                console.log('Aucun fichier sélectionné.');
+            }
+        }
       
-      vegaEmbed('#vis', vlSpec);
+      
+      
+      function loadFile() {
+        const valuesJSON = [];
+        var input = document.getElementById('fileInput');
+        var file = input.files[0];
+        
+        if (file) {
+          var reader = new FileReader();
+
+          reader.onload = function (e) {
+          // Le contenu du fichier est accessible ici
+          var content = e.target.result;
+          
+          var analyzer = new GiftParser2(false);         
+          analyzer.parse(content);
+          valuesJSONComplet= analyzer.parsedQuestions;
+          
+          valuesJSONComplet.forEach(question => {
+            valuesJSON.push({"Type Question": question.type[0],"origine":"Mon Questionaire"})
+          } )
+
+          vlSpecYourQ = toJson(valuesJSON)
+
+          vegaEmbed('#vis', vlSpecYourQ);
+          //vegaEmbed('#vis2', vlSpec);
+
+          //document.getElementById("result").innerText = JSON.stringify(valuesJSON) ;
+          
+          
+          };
+
+        // Lecture du contenu du fichier en tant que texte
+        reader.readAsText(file);
+    
+        }
+  
+      }
+
+      function commparer(){
+        valeurs = vlSpecFiles.data.values.concat(vlSpecYourQ.data.values)
+        //document.getElementById("result").innerText = JSON.stringify( valeurs) ;
+        vls = toJson ( valeurs)
+        vegaEmbed('#vis3', vls);
+
+        resultatComparaison = {}
+        Object.values(QT).forEach(type => {
+          
+          resultatComparaison[type ] = 0; 
+        })
+
+        resultatComparaison.myQ = 0;
+        resultatComparaison.selectetQ = 0;
+
+        //document.getElementById("result").innerText = JSON.stringify(resultatComparaison) ;
+
+        valeurs.forEach(question => {
+          typeQuestion = question["Type Question"]
+          source = question["origine"]
+          document.getElementById("result").innerText = JSON.stringify(typeQuestion) ;
+        })
+        
+      }
+
+      
+
+      function toJson (valuesJSON) {
+        vlSpec = {
+          $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+          "data": {        
+            "values": valuesJSON
+          },
+          "mark": "bar",
+          "encoding": {
+          "y": {"field": 'Type Question', "type": "nominal"},
+          "x": {"aggregate" : "count", "type": "quantitative"},
+          "color": {"field": "origine", "type": "nominal",
+            "scale": {
+              "domain": ["Mon Questionaire", "Base De Donnée"],
+              "range": ["#1f77b4", "#e7ba52"]
+            },
+            "title": "Source"
+          },
+          
+          }
+        }
+
+        return vlSpec
+      }
+
+
+
+
+      class GiftParser2 {
+    constructor(sTokenize) {
+        this.parsedQuestions = []
+        this.showTokenize = sTokenize
+        this.errorCount = 0
+    }
+
+    tokenize(data) {
+        //var separator = /\r\n/
+        var separator = "\n"
+		data = data.split(separator)
+		data = data.filter((val, idx) => val.trim() !== '' && !val.trim().startsWith("//"))
+		var questions = []
+        var curQuestion = ""
+        data.forEach(element => {
+            if (element.includes("::")) {
+                if (curQuestion != "") {
+                    questions.push(curQuestion)
+                    curQuestion = ""
+                }
+            }
+            curQuestion += element
+        });
+        questions.push(curQuestion)
+        return questions
+    }
+
+    parse(data) {
+        var tData = this.tokenize(data)
+        if (this.showTokenize) {
+			console.log(tData)
+		}
+        this.listQuestions(tData)
+    }
+
+    listQuestions(input) {
+        input.forEach(element => {
+            this.question(element);
+        })
+    }
+
+    question(input) {
+        var args = this.body(input)
+        var q = new Q(...Object.values(args))
+        this.parsedQuestions.push(q)
+    }
+
+    errMsg(msg, input) {
+        this.errorCount++;
+	    console.log(("Parsing Error ! on "+input+" -- msg : "+msg).red);
+    }
+
+    body(input) {
+        var ti = this.title(input)
+        var pa = this.partialCredit(input)
+        var ty = this.type(input, pa)
+        var te = this.text(input, ty)
+        var an = this.answer(input, ty, pa)
+        return { "title": ti, "text": te, "type": ty, "answer": an, "partialCredit": pa }
+    }
+
+    title(input) {
+        const startIndex = input.indexOf('::') + 2;
+        const endIndex = input.lastIndexOf('::');
+    
+        if (startIndex >= 0 && endIndex > startIndex) {
+            return input.substring(startIndex, endIndex);
+        } else {
+            return '';
+        }
+    }
+
+    text(input, ty) {
+        let occurrence = 0;
+        const bracketRegex = /\{[^}]+\}/g;
+        const titleRegex = /::[^:]+::/g;
+
+        const stringWithoutTitle = input.replace(titleRegex, '').trim();
+
+        return stringWithoutTitle.replace(bracketRegex, match => {
+            occurrence++;
+            if (ty == QT.TAT) {
+                return `->${occurrence}<-`;
+            } else {
+                return ""
+            }
+        }).trim();
+    }
+
+    extractAnswers(input) {
+        const regex = /{([^}]+)}/g
+        const matches = []
+        let match
+        
+        while ((match = regex.exec(input)) !== null) {
+            matches.push(match[1])
+        }
+
+        // EXAMPLE
+        if (matches.length == 0) {
+            return [QT.EXAMPLE]
+        }
+
+        return matches
+    }
+
+
+    findType(input, pa) {
+        const reg1 = /#.*\.\..*/ //Format NUM_R
+        const reg2 = /#.*\:.*/   //Format NUM_E
+
+        if (input == QT.EXAMPLE) {
+            return QT.EXAMPLE
+            
+          } else if (input.includes("~%")) {
+            return QT.QCM;
+          }else if (input.includes("~=")) {
+            return QT.MM;
+        
+          } else if (input.includes("~") && input.includes("=")) {
+            return QT.QCU;
+        
+          } else if (input.includes("=")&& input.includes("->")) {
+            return QT.ASSO;
+          } else if (reg1.test(input)) {    
+            return QT.NUM_R;
+        
+          } else if (reg2.test(input)) {
+            return QT.NUM_E;
+        
+          } else if (input.includes("TRUE") || input.includes("FALSE") || input.includes("T") || input.includes("F")) {
+            return QT.VF;
+        
+          } else if (input.includes("=")) {
+            return QT.TAT;
+          } else if (input.includes("")) {
+            return QT.TEXT;
+          }  else {
+            return "error";
+           }
+           
+
+        
+    }
+
+    type(input, pa) {
+        var matches = this.extractAnswers(input)
+        var types = []
+
+        matches.forEach(element => {
+            types.push(this.findType(element, pa))
+        })
+
+        return types
+    }
+
+    answer(input, type, pa) {
+        var matches = this.extractAnswers(input)
+        var answers = []
+
+        matches.forEach((element, idx) => {
+            if (element[0] == "#") {
+                matches[idx] = element.substring(1)
+            }
+        })
+
+        matches.forEach(element => {
+            var a = this.findAnswer(element, type, pa)
+            answers.push(a)
+        })
+
+        return answers
+    }
+
+    static keyCaracters = ["=", "~"]
+    findAnswer(input, type, pa) {
+        // Lit le contenu entre crochets envoyé dans "txt", et retourne les différentes réponses (vraies et fausses) envisagées ainsi que leur feedback s'il existe
+        function read(txt, accumulator = "", currentElement = "", elementsAccumulator = [], isFeedback = false, feedback = "") {
+            if (txt.length === 0) {
+                var finalElement = {}
+                finalElement[currentElement] = accumulator
+                finalElement["feedback"] = feedback
+                elementsAccumulator.push(finalElement)
+                return elementsAccumulator
+            }
+
+            var curCar = txt[0]
+
+            if (GiftParser2.keyCaracters.includes(curCar)) {
+                if (accumulator != "") {
+                    var element = {}
+                    element[currentElement] = accumulator
+                    element["feedback"] = feedback
+                    elementsAccumulator.push(element)
+                    accumulator = ""
+                    feedback = ""
+                    isFeedback = false
+                }
+                currentElement = curCar
+            } else {
+                if (curCar == "#") {isFeedback = true}
+    
+                if (!isFeedback) {
+                    accumulator += curCar
+                } else {
+                    feedback += curCar
+                }
+            }
+
+            return read(txt.substring(1), accumulator, currentElement, elementsAccumulator, isFeedback, feedback)
+        }
+
+        switch (type) {
+            // testAns = Boolean
+            // this.answer = Boolean
+            case QT.VF:
+                return input.includes("T")
+
+            // testAns = String
+            // this.answer = ""
+            case QT.TEXT:
+                return ""
+            
+            default:
+                return read(input)
+
+            // // testAns = String
+            // // this.answer = [{"text": String, "value": float, "feedback": String}]
+            // case QT.QCU:
+
+            // // testAns = [String]
+            // // this.answer = [{"text": String, "value": float, "feedback": String}]
+            // case QT.QCM:
+
+            // // testAns = {"Question1": "Réponse1", "Question2": "Réponse2"}
+            // // this.answer = {"Question1": "Réponse1", "Question2": "Réponse2"}
+            // case QT.ASSO:
+
+            // // testAns = float
+            // // this.answer = [{"target": float, "range": float", "value": float, "feedback": String}]
+            // case QT.NUM_E:
+
+            // // testAns = float
+            // // this.answer = [{"min": float, "max": float, "value": float, "feedback": String}]
+            // case QT.NUM_R:
+
+            // // testAns = [String]
+            // // this.answer = [{"text": String, "value": float}]
+            // case QT.TAT:
+
+
+        }
+    }
+
+    partialCredit(input) {
+        return input.includes('%')
+    }
+
+}
+
+const QT = {
+    VF: 'QUESTION_VRAI_FAUX',
+    // ::Q1:: 1+1=2 {T}
+    QCU: 'QUESTION_CHOIX_UNIQUE',
+    // ::Q2:: What's between orange and green in the spectrum? 
+    // { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
+    QCM: 'QUESTION_CHOIX_MULTIPLE',
+    // ::Q3:: What's between 1 and 5? 
+    // { =%50%2 =%50%3 ~%-100%7 }
+    ASSO: 'QUESTION_ASSOCIATION',
+    // ::Q4:: Which animal eats which food? { =cat -> cat food =dog -> dog food }
+    NUM_E: 'QUESTION_NUMERIQUE_ECART',
+    // ::Q5:: What is a number from 1 to 5? {#3:2}
+    NUM_R: 'QUESTION_NUMERIQUE_RANGE',
+    // ::Q6:: What is a number from 1 to 5? {#1..5}
+    TEXT: 'QUESTION_TEXT',
+    // ::Q7:: How are you? {}
+    TAT: 'QUESTION_TEXT_A_TROUS',
+    // ::Q8:: Would you like {~=some~a few} rice with your chicken?
+    EXAMPLE: 'EXAMPLE',
+    MM: 'MOT MANQUANT',
+    // ::Q8:: Two plus two equals {=four =4}
+}
+
+class Q {
+    constructor(title = "", text, type, answer, partialCredit = false) {
+        // if (!Object.values(QuestionType).includes(type)) {
+        //     throw new Error('Type de question invalide')
+        // }
+
+        this.title = title
+        this.text = text
+        this.type = type
+        this.answer = answer
+        this.partialCredit = partialCredit
+    }
+
+    check(testAns) {
+        switch (this.type) {
+            // testAns = Boolean
+            // this.answer = Boolean
+            case QuestionType.VF:
+                return this.answer == testAns ? 1 : 0
+
+            // testAns = String
+            // this.answer = [{"text": String, "value": float, "feedback": String}]
+            case QuestionType.QCU:
+                this.answer.forEach(ans => {
+                    if (testAns == ans["text"]) {
+                        return ans["value"]
+                    }
+                });
+                return .0
+
+            // testAns = [String]
+            // this.answer = [{"text": String, "value": float, "feedback": String}]
+            case QuestionType.QCM:
+                var score = .0
+                testAns.array.forEach(testA => {
+                    this.answer.array.forEach(ans => {
+                        if (ans["text"] == testA) {
+                            score += ans["value"]
+                        }
+                    });
+                });
+                return score
+
+            // testAns = {"Question1": "Réponse1", "Question2": "Réponse2"}
+            // this.answer = {"Question1": "Réponse1", "Question2": "Réponse2"}
+            case QuestionType.ASSO:
+                var matches = .0
+                var count = .0
+                for (var key in testAns) {
+                    count += 1
+                    matches += testAns[key] == this.answer[key] ? 1 : -1
+                }
+                return matches / count
+
+            // testAns = float
+            // this.answer = [{"target": float, "range": float", "value": float, "feedback": String}]
+            case QuestionType.NUM_E:
+                this.answer.array.forEach(ans => {
+                    var min = ans["target"] - ans["range"]
+                    var max = ans["target"] + ans["range"]
+                    if (testAns >= min && testAns <= max) {
+                        return ans["value"]
+                    }
+                });
+                return .0
+
+            // testAns = float
+            // this.answer = [{"min": float, "max": float, "value": float, "feedback": String}]
+            case QuestionType.NUM_R:
+                this.answer.array.forEach(ans => {
+                    if (testAns >= ans["min"] && testAns <= ans["max"]) {
+                        return ans["value"]
+                    }
+                });
+                return .0
+            
+            // testAns = String
+            // this.answer = ""
+            case QuestionType.TEXT:
+                return "Needs verification"      
+
+            // testAns = [String]
+            // this.answer = [{"text": String, "value": float}]
+            case QuestionType.TAT:
+                var score = .0
+                testAns.array.forEach((testA, idx) => {
+                    if (this.answer[idx] == testA) {
+                        score += this.answer[idx].value
+                    }
+                });
+                return score
+        }
+    }
+}
     </script>
   </body>
 </html>

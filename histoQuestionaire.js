@@ -1,8 +1,8 @@
 const fs = require('fs');
 const questions = require("@caporal/core").default;
 const Question = require('./Question.js');
-const QuestionType = require('./QuestionType.js');
-const GiftParser = require('./GiftParser.js')
+//const QuestionType = require('./QuestionType.js');
+//const GiftParser = require('./GiftParser.js')
 const { decomposer,    supprimerBalisesHTML,    convertGIFTLinetoObject,    typeQuestion,    convertGIFTtoObject  }  = require('./giftToObject.js'); //maybe renvoit pas qu'un objet
 //const main = require('./main.js');
 const vegaLiteApi = require('vega-lite-api');
@@ -14,13 +14,14 @@ const path = require('path');
 
 questions
     .command('histogramme', "Affiche l'Histogramme d'un questionnaire")
-    .argument('<questionaire>', 'questionaire avec les questions en format GIFT')
+    
     //.option('-s, --AFaire', 'avec couleur?', { validator : questions.BOOLEAN, default: false })
     //.option('-t, --Afaire2', 'bidule chouette', { validator: questions.BOOLEAN, default: false })
     .action(({args, options, logger}) => {
         
-        histogramme(args.questionaire) ;
-        //openIndexHtml();
+        //histogramme(args.questionaire) ;
+        //console.log(a);
+        openIndexHtml();
 
     });
 
@@ -28,17 +29,20 @@ questions.run(process.argv.slice(2));
 
 
 function histogramme(questionaire) {
-    
+  openIndexHtml();
+  /*
     //const questionary = decomposer(questionaire) ;
     const questionary = object(questionaire) ;
-    //console.log("\r\n\r\n"+questionary+"  rika")
+    console.log("\r\n\r\n"+JSON.stringify(questionary)+"  rika")
     
     donneeQuestionaire = convertToJSON(questionary);
     
     //openIndexHtml();
-    //afficherHistogramme(donneeQuestionaire);
+    //console.log(JSON.parse(donneeQuestionaire).data.values)
+    obJSon= JSON.parse(donneeQuestionaire).data.values
+    //console.log( JSON.stringify(obJSon))
 
-    return donneeQuestionaire;
+    return obJSon;*/
 }
 
 function convertToJSON(tabQuestionaire)  {
@@ -66,7 +70,7 @@ function convertToJSON(tabQuestionaire)  {
     const objJson= {
         $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
         "data": {        
-            values: valuesJSON
+            "values": valuesJSON
         },
       "mark": "bar",
       "encoding": {
@@ -86,14 +90,10 @@ function convertToJSON(tabQuestionaire)  {
     .toObject();
         */
 
-console.log(JSON.stringify(objJson, null, 2))
+//console.log(JSON.stringify(objJson, null, 2))
    return JSON.stringify(objJson); 
 }
 
-function afficherHistogramme(donnees) {
-    
-    openIndexHtml();
-}
 
 const openIndexHtml = async () => {
     const path = require('path');
@@ -130,7 +130,7 @@ const openIndexHtml = async () => {
            const filePath = path.join(directoryPath, file);
           const content = fs.readFileSync(filePath, 'utf-8');
 
-          
+          //console.log(typeof content)
           giftObject.push(questUnitaire(content))
         });
 
@@ -141,6 +141,10 @@ const openIndexHtml = async () => {
   //console.log(giftObject);
    return giftObject;
 }
+
+
+
+
 
 
 function questUnitaire(file) {
