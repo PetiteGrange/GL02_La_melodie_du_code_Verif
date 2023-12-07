@@ -93,15 +93,23 @@ class GiftParser {
 
     extractAnswers(input) {
         const regex = /{([^}]+)}/g
+        const regex2 = /{}/g
         const matches = []
         let match
         
         while ((match = regex.exec(input)) !== null) {
+            console.log(match)
             matches.push(match[1])
         }
 
+        //Si les accolades sont vides
+        if (regex2.test(input)) {
+            return [QT.TEXT]
+        }
+        
+        
         // EXAMPLE
-        if (matches.length == 0) {
+        else if (matches.length == 0) {
             return [QT.EXAMPLE]
         }
 
@@ -110,10 +118,12 @@ class GiftParser {
 
 
     findType(input, pa) {
-        const reg1 = /#.*\.\..*/ //Format NUM_R
-        const reg2 = /#.*\:.*/   //Format NUM_E
+        const reg1 = /\#[\s\S]*\.\.[\s\S]*/g //Format NUM_R
+        const reg2 = /\#[\s\S]*\:[\s\S]*/g  //Format NUM_E
 
-        if (input == QT.EXAMPLE) {
+        if (input == QT.TEXT) {
+            return QT.TEXT;
+          }  else if (input == QT.EXAMPLE) {
             return QT.EXAMPLE
             
           } else if (input.includes("~%")) {
@@ -132,14 +142,13 @@ class GiftParser {
           } else if (reg2.test(input)) {
             return QT.NUM_E;
         
+          }  else if (input.includes("=")) {
+            return QT.TAT;
+
           } else if (input.includes("TRUE") || input.includes("FALSE") || input.includes("T") || input.includes("F")) {
             return QT.VF;
         
-          } else if (input.includes("=")) {
-            return QT.TAT;
-          } else if (input.includes("")) {
-            return QT.TEXT;
-          }  else {
+          } else {
             return "error";
            }
            
