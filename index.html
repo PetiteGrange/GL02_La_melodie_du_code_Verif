@@ -3,7 +3,7 @@
   <head>
     <title>Vega-Lite Bar Chart</title>
     <meta charset="utf-8" />
-
+    <!-- code nécessaire pour VegaLite -->
     <script src="https://cdn.jsdelivr.net/npm/vega@5.25.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.16.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2"></script>
@@ -13,7 +13,7 @@
         
 
     <style media="screen">
-      /* Add space between Vega-Embed links  */
+      /* Ajouter de l'espace entre les liens Vega-Embed  */
       .vega-actions a {
         margin-right: 5px;
       }
@@ -21,73 +21,91 @@
   </head>
   <body>
     <h1>Le nombre de question dans un questionaire en fonction de son type </h1>
-    <!-- Container for the visualization -->
+    
     <h3>Votre questionaire</h3>
+    <!-- bouton pour importer UN questionaire .GIFT -->
     <form id="fileForm">
         <label for="fileInput">Sélectionnez un fichier :</label>
         <input type="file" id="fileInput"  onchange="loadFile()" />
         
       </form>
-    
+
+      <!-- Container pour la visualisation du questionaire choisi -->
       <div id="vis"></div>
+
+
       <h3>Dossier(s) pour la comparaison</h3>
+      <!-- bouton pour importer plusieurs questionaires en .GIFT -->
       <form id="fileForm">
         <label for="fileInput2">Sélectionnez un ou plusieurs fichier :</label>
         <input type="file" id="fileInput2"  onchange="traiterFichiers()" multiple/>
         
 
       </form>
-      
+     <!-- Container pour la visualisation des différents questionaires choisis --> 
     <div id="vis2"></div>
+
+    <!-- Bouton qui appelle la fonction JS pour comparer notre questionaire avec les questionaires sélectionnés  -->
     <h3>Résultat de la comparaison</h3>
     <button onclick="commparer()">Comparer</button>
     
+    <!-- Container pour la visualisation de la comparaison -->
     <div id="vis3"></div>
+    <br><br>
+    <!-- Container pour afficher le résultat de la comparaison -->
     <div id="result"></div>
     
 
     <script>
+      //Declaration des variables afin de pouvoir les réutiliser dans la comparaison
       var vlSpecFiles;
       var vlSpecYourQ;
 
       
-
+    //Fonction qui permet de charger plusieurs fichiers et les afficher dans le contener vis2
       function traiterFichiers() {
+            //On reccupère les fichiers selectionnés dans le imput2 qui corespond aux questionaires de la base de données
             var input = document.getElementById('fileInput2');
             var files = input.files;
+            
+            // On créait une liste afin de stocker toutes les valeurs des questionaires
             const valuesJSON = [];
 
+            //Si on a bien au moins un fichier de selectionné
             if (files.length > 0) {
                 for (var i = 0; i < files.length; i++) {
                     var file = files[i];
                     
-                    
+                    //Reader permet de lire les fichiers
                     var reader = new FileReader();
 
                     reader.onload = function (e) {
-                    // Le contenu du fichier est accessible ici
-                    var content = e.target.result;
-                    //document.getElementById("result").innerText = JSON.stringify(valuesJSON) ;
-          
-                    var analyzer = new GiftParser2(false);         
-                    analyzer.parse(content);
-                    valuesJSONComplet= analyzer.parsedQuestions;
-          
-                    valuesJSONComplet.forEach(question => {
-                      valuesJSON.push({"Type Question": question.type[0],"origine":"Base De Donnée"})
-                    } )
-
-                    vlSpecFiles = toJson(valuesJSON)
-
-                    vegaEmbed('#vis2', vlSpecFiles);
-
-                    //document.getElementById("result").innerText = JSON.stringify(valuesJSON) ;
-          
+                        // Le contenu du fichier est accessible ici
+                        var content = e.target.result;
                     
+                        //Le parser permet de convertit du test en objet questionaire (défini plus bas dans le code class GiftParser2)
+                        var analyzer = new GiftParser2(false);         
+                        analyzer.parse(content);
+                    
+                        //On réccupère l'objet dans une variable
+                        valuesJSONComplet= analyzer.parsedQuestions;
+          
+                        //On réccupère juste les questions
+                        valuesJSONComplet.forEach(question => {
+                          valuesJSON.push({"Type Question": question.type[0],"origine":"Base De Donnée"}) //On réccupère juste le preier ite^m car le parser analyse chaque "{}" dans une ligne et peut donc réciser plusieurs un meme type de question pour une meme question (exemple des textes a trous)
+                        } )
+
+                        //Convertie l'objet en Json afin de pouvoir l'afficher
+                        //vlSpecFiles est déclaré en dehors de la fonction et sera donc réutiliseable
+                        vlSpecFiles = toJson(valuesJSON)
+
+                        //On affiche le graphique corespondant dans vis2
+                        vegaEmbed('#vis2', vlSpecFiles);
+
                     };
 
+                    //nécessaire pour lancer la lecture des fichiers
                     reader.readAsText(file);
-                    //document.getElementById("result").innerText = JSON.stringify(reader.onload ) ;
                     
                 }
             } else {
@@ -96,81 +114,150 @@
         }
       
       
-      
+      //Fonction pour lire UN questionnaire et l'afficher dans vis
       function loadFile() {
+         // On créait une liste afin de stocker toutes les valeurs des questionaires
         const valuesJSON = [];
+
+        //On reccupère les fichiers selectionnés dans le imput qui corespond au questionaire de l'utilisateur
         var input = document.getElementById('fileInput');
         var file = input.files[0];
         
+        //Si on réccupère bien un fichier
         if (file) {
+          //Reader permet de lire les fichiers
           var reader = new FileReader();
 
           reader.onload = function (e) {
-          // Le contenu du fichier est accessible ici
-          var content = e.target.result;
-          
-          var analyzer = new GiftParser2(false);         
-          analyzer.parse(content);
-          valuesJSONComplet= analyzer.parsedQuestions;
-          
-          valuesJSONComplet.forEach(question => {
-            valuesJSON.push({"Type Question": question.type[0],"origine":"Mon Questionaire"})
-          } )
 
-          vlSpecYourQ = toJson(valuesJSON)
-
-          vegaEmbed('#vis', vlSpecYourQ);
-          //vegaEmbed('#vis2', vlSpec);
-
-          //document.getElementById("result").innerText = JSON.stringify(valuesJSON) ;
+            // reccupere le contenu fichier
+            var content = e.target.result;
           
+            //Le parser permet de convertit du test en objet questionaire (défini plus bas dans le code class GiftParser2)
+            var analyzer = new GiftParser2(false);         
+            analyzer.parse(content);
+            
+            //On réccupère l'objet dans une variable
+            valuesJSONComplet= analyzer.parsedQuestions;
           
+            
+            //On réccupère juste les questions
+            valuesJSONComplet.forEach(question => {
+                valuesJSON.push({"Type Question": question.type[0],"origine":"Mon Questionaire"})
+            } )
+
+            //Convertie l'objet en Json afin de pouvoir l'afficher
+            //vlSpecYourQ est déclaré en dehors de la fonction et sera donc réutiliseable
+            vlSpecYourQ = toJson(valuesJSON)
+
+            //On affiche le graphique corespondant dans vis
+            vegaEmbed('#vis', vlSpecYourQ);
           };
 
-        // Lecture du contenu du fichier en tant que texte
+        // //nécessaire pour lancer la lecture du fichier en tant que texte
         reader.readAsText(file);
     
         }
   
       }
-
+      //fonction qui affiche danss vis3 lun diagramme comparatif et qui renvoit dans resultat un comparatif entre le questionaire choisi et la base de questions
       function commparer(){
+        //On fussionne les valeurs de tous les questionnaires selectionnés 
         valeurs = vlSpecFiles.data.values.concat(vlSpecYourQ.data.values)
-        //document.getElementById("result").innerText = JSON.stringify( valeurs) ;
+        
+        //On converti le tout en JSON afin d'avoir un format afficheable en VegaLite
         vls = toJson ( valeurs)
+        
+        //On affiche l'histogramme dans vis3
         vegaEmbed('#vis3', vls);
 
+        //On initialise un objet qui nous servira pour comparrer les données
         resultatComparaison = {}
+
+        //on créait et initialise les différentes provenances d'une question afin de pouvoir compter le nombre de questions
+        resultatComparaison.myQestionaire = 0;
+        resultatComparaison.selectetQestionaire = 0;
+
+        //On ajoute un attribut par type de question
+        //On stock bien la valeur et non la clé de QT (voir le code de l'objet QT plus bas dans le code)
         Object.values(QT).forEach(type => {
-          
-          resultatComparaison[type ] = 0; 
+          //on initalise à zéro
+          resultatComparaison[type] = 0; 
         })
 
-        resultatComparaison.myQ = 0;
-        resultatComparaison.selectetQ = 0;
-
-        //document.getElementById("result").innerText = JSON.stringify(resultatComparaison) ;
-
+        //pour chaque question on va incrémenter les attributs corespondants
         valeurs.forEach(question => {
-          typeQuestion = question["Type Question"]
-          source = question["origine"]
-          document.getElementById("result").innerText = JSON.stringify(typeQuestion) ;
+            //on stock les données dans variables afin de faciliter la lecture du code
+            typeQ = question["Type Question"]
+            source = question.origine
+
+            //si la question provient du questionaire que l'on a choisi (vis)
+            if (source == "Mon Questionaire") {
+                //on ajoute 1 au compteur propre
+                resultatComparaison.myQestionaire ++;
+                //on ajoute 1 au type de question corespondant
+                resultatComparaison[typeQ] ++;
+
+            //si la question provient de la base de questions selectionnée que l'on a choisi (vis2)
+            } else if (source == "Base De Donnée") {
+                //on ajoute 1 au compteur propre
+                resultatComparaison.selectetQestionaire ++;
+                
+                //on retire 1 au type de question corespondant car on calcule une valeur relative centré sur le questionaire choisi (vis)
+                resultatComparaison[typeQ] --;
+
+            } else {
+                //si une autre source est rencontré, on renvoit une erreur
+                console.log("ERREUR DE SOURCE")
+            }
+          
         })
+
+        //On prépare la chaine de texte de résultat que l'on affichera
+        resultFormatString = "Nombre relatif de question dans votre questionaire par type \r\n\r\n";
         
+        //on parcours l'objet "resultatComparaison" afin de l'afficher attribut par attribut
+        Object.entries(resultatComparaison).forEach( ([key,data]) => {
+            
+            //on ajoute "questions" a la fin des lignes propres au compteurs des questions lié à la source afin de faciliter la lecture
+            if (key == "selectetQestionaire" || key == "myQestionaire") {
+                resultFormatString += key+" : " + data+ " questions\r\n";
+            
+            // on ajoute un "+" afin de faciliter la compréhension que l'on affiche bien une vvaleur relative
+            }else if(data > 0) {
+                resultFormatString += key+" : " + "+"+data+ "\r\n";
+            
+            //pour le - il s'affiche naturellement
+            } else {
+                resultFormatString += key+" : " + data+ "\r\n";
+            }
+
+            //on ajoute un espace entre le compteur des question et le calcul relatibe par type pour faciliter la lecture
+            if (key == "selectetQestionaire") {
+                resultFormatString += "\r\n";
+            }
+        
+        })
+        //on affiche dans "result"  la chaine de caractère obtenu
+        document.getElementById("result").innerText = resultFormatString ;
       }
 
       
-
+      //Fonction qui réccupère en entréee une liste d'objet pour retourner un objet JSON
       function toJson (valuesJSON) {
         vlSpec = {
+          //schema prédéfini dans VegaLite
           $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
           "data": {        
             "values": valuesJSON
           },
+          //"bar" car on soujaite un histogramme
           "mark": "bar",
           "encoding": {
+          //on a choisi cet ordre de x et y afin de voir le type de question dans le sens de la lecture
           "y": {"field": 'Type Question', "type": "nominal"},
           "x": {"aggregate" : "count", "type": "quantitative"},
+          //On défini une couleur afin de pouvoir différencier la provenance du questionaire dans la comparaison
           "color": {"field": "origine", "type": "nominal",
             "scale": {
               "domain": ["Mon Questionaire", "Base De Donnée"],
@@ -187,8 +274,9 @@
 
 
 
-
-      class GiftParser2 {
+// class/Parser qui permet de convertir un .gift en objet javacript (objet  Q ci-dessous dans le code)
+//la doc de la class est dans son document JS propre
+class GiftParser2 {
     constructor(sTokenize) {
         this.parsedQuestions = []
         this.showTokenize = sTokenize
@@ -196,7 +284,7 @@
     }
 
     tokenize(data) {
-        //var separator = /\r\n/
+        
         var separator = "\n"
 		data = data.split(separator)
 		data = data.filter((val, idx) => val.trim() !== '' && !val.trim().startsWith("//"))
@@ -448,6 +536,7 @@
 
 }
 
+// OBJET JS qui permet de définir plus simplement le type d'une question 
 const QT = {
     VF: 'QUESTION_VRAI_FAUX',
     // ::Q1:: 1+1=2 {T}
@@ -472,6 +561,8 @@ const QT = {
     // ::Q8:: Two plus two equals {=four =4}
 }
 
+// class qui décrit une question en JS
+//la doc de la class est dans son document JS propre
 class Q {
     constructor(title = "", text, type, answer, partialCredit = false) {
         // if (!Object.values(QuestionType).includes(type)) {
