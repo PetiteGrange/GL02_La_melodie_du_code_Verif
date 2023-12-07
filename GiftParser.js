@@ -108,7 +108,7 @@ Sortie : (String) => titre de la question
     title(input) {
         const startIndex = input.indexOf('::') + 2;
         const endIndex = input.lastIndexOf('::');
-    
+
         if (startIndex >= 0 && endIndex > startIndex) {
             return input.substring(startIndex, endIndex);
         } else {
@@ -149,7 +149,7 @@ Sortie : [String] => liste de texte de réponses (souvent, un seul élément dan
         const regex = /{([^}]+)}/g
         const matches = []
         let match
-        
+
         while ((match = regex.exec(input)) !== null) {
             matches.push(match[1])
         }
@@ -163,10 +163,10 @@ Sortie : [String] => liste de texte de réponses (souvent, un seul élément dan
     }
 
 /*
-Description : donne le type 
-Entrée : 
-Fonctionnement : 
-Sortie : 
+Description : donne le type
+Entrée :
+Fonctionnement :
+Sortie :
 */
     type(input) {
         var matches = this.extractAnswers(input)
@@ -191,30 +191,30 @@ Sortie : TODO
 
         if (input == QT.EXAMPLE) {
             return QT.EXAMPLE
-            
+
           } else if (input.includes("{}")) {
             return QT.TEXT;
           } else if (input.includes("~%")) {
             return QT.QCM;
           }else if (input.includes("~=")) {
             return QT.MM;
-        
+
           } else if (input.includes("~") && input.includes("=")) {
             return QT.QCU;
-        
+
           } else if (input.includes("=") && input.includes("->")) {
             return QT.ASSO;
           }else if (input.includes("=")) {
             return QT.TAT;
-          }else if (reg1.test(input)) {    
+          }else if (reg1.test(input)) {
             return QT.NUM_R;
-        
+
           }else if (reg2.test(input)) {
             return QT.NUM_E;
-        
+
           }else if (input.includes("TRUE") || input.includes("FALSE") || input.includes("T") || input.includes("F")) {
             return QT.VF;
-        
+
           }  else {
             return "error";
            }
@@ -267,7 +267,7 @@ Sortie : TODO
                     }
                 }
                 elementsAccumulator.push(finalElement)
-                console.log(elementsAccumulator)
+//                console.log(elementsAccumulator)
                 return elementsAccumulator
             }
 
@@ -317,7 +317,7 @@ Sortie : TODO
             // this.answer = ""
             case QT.TEXT:
                 return ""
-            
+
             default:
                 return read(input)
         }
