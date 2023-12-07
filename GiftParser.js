@@ -98,7 +98,7 @@ class GiftParser {
         let match
         
         while ((match = regex.exec(input)) !== null) {
-            console.log(match)
+            
             matches.push(match[1])
         }
 

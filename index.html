@@ -195,16 +195,22 @@
 
             //si la question provient du questionaire que l'on a choisi (vis)
             if (source == "Mon Questionaire") {
-                //on ajoute 1 au compteur propre
-                resultatComparaison.myQestionaire ++;
+                //on ne comptabilise pas les exemples
+                if (typeQ != "EXAMPLE") {                
+                    //on ajoute 1 au compteur propre
+                    resultatComparaison.myQestionaire ++;
+                }
                 //on ajoute 1 au type de question corespondant
                 resultatComparaison[typeQ] ++;
 
             //si la question provient de la base de questions selectionnée que l'on a choisi (vis2)
             } else if (source == "Base De Donnée") {
-                //on ajoute 1 au compteur propre
-                resultatComparaison.selectetQestionaire ++;
                 
+                //on ne comptabilise pas les exemples
+                if (typeQ != "EXAMPLE") {
+                    //on ajoute 1 au compteur propre
+                    resultatComparaison.selectetQestionaire ++;
+                }
                 //on retire 1 au type de question corespondant car on calcule une valeur relative centré sur le questionaire choisi (vis)
                 resultatComparaison[typeQ] --;
 
@@ -223,7 +229,7 @@
             
             //on ajoute "questions" a la fin des lignes propres au compteurs des questions lié à la source afin de faciliter la lecture
             if (key == "selectetQestionaire" || key == "myQestionaire") {
-                resultFormatString += key+" : " + data+ " questions\r\n";
+                resultFormatString += key+" : " + data+ " questions (exemples non comptabilisés)\r\n";
             
             // on ajoute un "+" afin de faciliter la compréhension que l'on affiche bien une vvaleur relative
             }else if(data > 0) {
@@ -381,7 +387,6 @@ class GiftParser2 {
         let match
         
         while ((match = regex.exec(input)) !== null) {
-            console.log(match)
             matches.push(match[1])
         }
 
