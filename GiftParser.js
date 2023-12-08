@@ -30,7 +30,6 @@ class GiftParser {
     }
 
     parse(data) {
-        console.log("TEST")
         var tData = this.tokenize(data)
         if (this.showTokenize) {
 			console.log(tData)
@@ -180,6 +179,7 @@ class GiftParser {
 
         matches.forEach(element => {
             var a = this.findAnswer(element, type, pa)
+            console.log(type[0], " : ", a)
             answers.push(a)
         })
 
@@ -202,7 +202,6 @@ class GiftParser {
                     }
                 }
                 elementsAccumulator.push(finalElement)
-                console.log(elementsAccumulator)
                 return elementsAccumulator
             }
 
@@ -242,7 +241,9 @@ class GiftParser {
             return read(txt.substring(1), accumulator, currentElement, elementsAccumulator, currentField, feedback, partialCredit)
         }
 
-        switch (type) {
+        var read_result = read(input)
+
+        switch (type[0]) {
             // testAns = Boolean
             // this.answer = Boolean
             case QT.VF:
@@ -253,8 +254,20 @@ class GiftParser {
             case QT.TEXT:
                 return ""
             
+            case QT.ASSO:
+                var result = []
+                read_result.forEach(element => {
+                    var split = element["="].split('->').map(str => str.trim())
+                    let left = split[0]
+                    let right = split[1]
+                    result.push({
+                        [left]: right
+                    })
+                })
+                return result
+            
             default:
-                return read(input)
+                return read_result
 
             // // testAns = String
             // // this.answer = [{"text": String, "value": float, "feedback": String}]
