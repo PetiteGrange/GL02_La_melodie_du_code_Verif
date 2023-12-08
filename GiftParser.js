@@ -44,8 +44,10 @@ class GiftParser {
     }
 
     question(input) {
+        console.log("INPUT : ", input)
         var args = this.body(input)
         var q = new Q(...Object.values(args))
+        console.log(q)
         this.parsedQuestions.push(q)
     }
 
@@ -107,7 +109,6 @@ class GiftParser {
             return [QT.TEXT]
         }
         
-        
         // EXAMPLE
         else if (matches.length == 0) {
             return [QT.EXAMPLE]
@@ -116,44 +117,29 @@ class GiftParser {
         return matches
     }
 
-
     findType(input, pa) {
-        const reg1 = /\#[\s\S]*\.\.[\s\S]*/g //Format NUM_R
-        const reg2 = /\#[\s\S]*\:[\s\S]*/g  //Format NUM_E
-
-        if (input == QT.TEXT) {
-            return QT.TEXT;
-          }  else if (input == QT.EXAMPLE) {
+        if (input === QT.TEXT) {
+            return QT.TEXT
+        } else if (input === QT.EXAMPLE) {
             return QT.EXAMPLE
-            
-          } else if (input.includes("~%")) {
-            return QT.QCM;
-          }else if (input.includes("~=")) {
-            return QT.MM;
-        
-          } else if (input.includes("~") && input.includes("=")) {
-            return QT.QCU;
-        
-          } else if (input.includes("=")&& input.includes("->")) {
-            return QT.ASSO;
-          } else if (reg1.test(input)) {    
-            return QT.NUM_R;
-        
-          } else if (reg2.test(input)) {
-            return QT.NUM_E;
-        
-          }  else if (input.includes("=")) {
-            return QT.TAT;
-
-          } else if (input.includes("TRUE") || input.includes("FALSE") || input.includes("T") || input.includes("F")) {
-            return QT.VF;
-        
-          } else {
-            return "error";
-           }
-           
-
-        
+        } else if (input.includes("->")) {
+            return QT.ASSO
+        } else if (input.includes("TRUE") || input.includes("FALSE") || input.includes("T") || input.includes("F")) {
+            return QT.VF
+        } else if (input[0] === "#") {
+            const hasDoubleDot = /\.\./.test(input);
+            const hasTripleDotOrMore = /\.{3,}/.test(input);
+            if (hasDoubleDot && !hasTripleDotOrMore) {
+                return QT.NUM_R
+            } else {
+                return QT.NUM_E
+            }
+        } else if (!input.includes("~")) {
+            return QT.TAT
+        } else if (pa) {
+            return QT.QCM
+        }
+        return QT.QCU
     }
 
     type(input, pa) {

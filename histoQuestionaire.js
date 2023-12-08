@@ -7,7 +7,7 @@ const path = require('path');
 //créait la commande "histogramme" disponible en invite de commande
 questions
     .command('histogramme', "Affiche l'Histogramme d'un questionnaire")
-    
+    .alias("hg")
     .action(({args, options, logger}) => {
         
       
