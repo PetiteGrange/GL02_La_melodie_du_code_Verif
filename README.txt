@@ -19,6 +19,9 @@ $ node . <command>
 
 Permet à l'utilisateur de faire une sélection de questions à mettre dans un questionnaire.
 
+<command> : test 
+
+Permet de tester le questionnaire contenu dans le fichier donné en argument.
 
 <command> : searchFile (alias sf)
 
