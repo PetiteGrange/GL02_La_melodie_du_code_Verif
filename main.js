@@ -37,10 +37,10 @@ let questionnaire = [];
 let questionnaireFini;
 
 //importation de QuestionType pour avoir les différents type des questions
-const QT = require('./QuestionType.js')  
+const QT = require('./QuestionType.js')
 
-const Question = require('./Question.js');  
- 
+const Question = require('./Question.js');
+
 //on a besoin de ce fichier pour créer les VCards
 const Create = require('./vcardGenerator');
 
@@ -200,16 +200,18 @@ program
           }
           // Avant de sortir définitivement de la boucle,
           // on affiche le questionnaire pour une dernière vérification.
-          console.log('------------------------------'.cyan);
-          console.log('Voici votre questionnaire'.brightCyan);
-          console.log('------------------------------'.cyan);
-          console.log(questionnaire);
-          console.log('\n\n------------------------------'.cyan);
-          console.log ('Voulez-vous modifier ce questionnaire ?'.brightYellow);
-          console.log('------------------------------\n\n'.cyan);
-          reponse = await ouiNon();
-          if (reponse == 'Oui') {
-            questionnaireFini = false;
+          if (questionnaire.length > 14 && questionnaire.length < 21) {
+            console.log('------------------------------'.cyan);
+            console.log('Voici votre questionnaire'.brightCyan);
+            console.log('------------------------------'.cyan);
+            console.log(questionnaire);
+            console.log('\n\n------------------------------'.cyan);
+            console.log ('Voulez-vous modifier ce questionnaire ?'.brightYellow);
+            console.log('------------------------------\n\n'.cyan);
+            reponse = await ouiNon();
+            if (reponse == 'Oui') {
+              questionnaireFini = false;
+            }
           }
         }
       }
@@ -381,13 +383,13 @@ program
   .command('histogramme', "Affiche l'Histogramme d'un questionnaire")
     .alias("hg")
     .action(({args, options, logger}) => {
-        
-      
+
+
       histogrammeFunction();
 
     });
 
-    
+
 /*
 Description : selectQuestion sert à permettre à l'utilisateur de sélectionner
 une question dans la base de données.
@@ -399,7 +401,7 @@ questions grâce au parseur, les propose à l'utilisateur pour sélection.
 Sortie : retourne la question choisie par l'utilisateur sous la forme
 d'un objet
 */
-    
+
 
 async function selectQuestion() {
   // Gestion des erreurs en mettant toute la fonction dans un 'try'
