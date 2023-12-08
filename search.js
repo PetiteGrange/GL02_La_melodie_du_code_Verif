@@ -117,7 +117,7 @@
 
         })
 
-        .command('displayf', "permet d'afficher toutes les questions d'ou ou de plusieurs fichiers, sans trier par type de question")
+        .command('displayFile', "permet d'afficher toutes les questions d'ou ou de plusieurs fichiers, sans trier par type de question")
         .alias('df')
         .argument('[file...]', "nom du ou des fichiers que l'on veut afficher")
         .option('-a', 'affiche tous les fichiers')
