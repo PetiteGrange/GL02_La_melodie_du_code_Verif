@@ -30,6 +30,7 @@ class GiftParser {
     }
 
     parse(data) {
+        console.log("TEST")
         var tData = this.tokenize(data)
         if (this.showTokenize) {
 			console.log(tData)
