@@ -266,6 +266,65 @@ class GiftParser {
                 })
                 return result
             
+            case QT.NUM_E:
+                var result = []
+                read_result.forEach(element => {
+                    var split = ""
+                    var key = ""
+                    var value = 1
+                    if ("=" in element) {
+                        key = "="
+                    } else {
+                        key = "~"
+                        value = 0
+                    }
+
+                    if ("partialCredit" in element) {
+                        value = element["partialCredit"]
+                    }
+
+                    var split = element[key].split(":").map(str => str.trim())
+                    let target = parseFloat(split[0])
+                    let range = parseFloat(split[1])
+                    result.push({
+                        target: target,
+                        range: range,
+                        value: value,
+                        feedback: element["feedback"]
+                    })
+                })
+                return result
+
+            case QT.NUM_R:
+                var result = []
+                read_result.forEach(element => {
+                    var split = ""
+                    var key = ""
+                    var value = 1
+                    if ("=" in element) {
+                        key = "="
+                    } else {
+                        key = "~"
+                        value = 0
+                    }
+
+                    if ("partialCredit" in element) {
+                        value = element["partialCredit"]
+                    }
+
+                    var split = element[key].split("..").map(str => str.trim())
+                    let min = parseFloat(split[0])
+                    let max = parseFloat(split[1])
+                    result.push({
+                        min: min,
+                        max: max,
+                        value: value,
+                        feedback: element["feedback"]
+                    })
+                })
+                return result
+                
+            
             default:
                 return read_result
 
