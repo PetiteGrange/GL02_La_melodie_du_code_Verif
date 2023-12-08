@@ -5,6 +5,8 @@
 // C'est une fonction asynchrone donc pour être sûr
 // que le programme attend bien sa réalisation,
 // fs est liée à une promesse.
+const TestQuestionnaire = require('./TestQuestionnaire.js')
+
 const fs = require('fs');
 const fsp = fs.promises;
 
@@ -379,7 +381,7 @@ program
         Create.askQuestions();
   })
 
-  //créait la commande "histogramme" disponible en invite de commande afin d'afficher une page HTML
+  //créé la commande "histogramme" disponible en invite de commande afin d'afficher une page HTML
   .command('histogramme', "Affiche l'Histogramme d'un questionnaire")
     .alias("hg")
     .action(({args, options, logger}) => {
@@ -387,8 +389,24 @@ program
 
       histogrammeFunction();
 
-    });
+    })
 
+    // test le questionnaire contenu dans le fichier
+  .command('test', 'permet de tester un questionnaire')
+	.argument('<file>', 'The file to execute')
+    .action(({args, options, logger}) => {
+		fs.readFile(args.file, 'utf8', function (err,data) {
+			if (err) {
+				return logger.warn(err);
+			}
+			
+			var analyzer = new GiftParser();
+			analyzer.parse(data);
+
+			var q = new TestQuestionnaire(analyzer.parsedQuestions)
+			q.start()
+		})
+    });
 
 /*
 Description : selectQuestion sert à permettre à l'utilisateur de sélectionner
