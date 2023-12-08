@@ -15,5 +15,6 @@
   },
   "devDependencies": {
     "jasmine": "^3.99.0"
-  }
+  },
+  "main": "main.js" 
 }
