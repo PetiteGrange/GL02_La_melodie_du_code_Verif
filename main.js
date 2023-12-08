@@ -5,7 +5,9 @@
 // C'est une fonction asynchrone donc pour être sûr
 // que le programme attend bien sa réalisation,
 // fs est liée à une promesse.
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsp = fs.promises;
+
 
 // inquirer permet de faire une 'interface' de choix.
 const inquirer = require('inquirer');
@@ -33,6 +35,14 @@ const program = require('@caporal/core').default;
 // besoin dans plusieurs fonctions.
 let questionnaire = [];
 let questionnaireFini;
+
+//importation de QuestionType pour avoir les différents type des questions
+const QT = require('./QuestionType.js')  
+
+const Question = require('./Question.js');  
+ 
+//on a besoin de ce fichier pour créer les VCards
+const Create = require('./vcardGenerator');
 
 
 /*
@@ -89,16 +99,17 @@ program
 	.argument('<file>', 'The file to check')
 	.option('-t, --showTokenize', 'log the tokenization results', { validator: program.BOOLEAN, default: false })
 	.action(({args, options, logger}) => {
-    console.log("TEST")
-    fs.readFile(args.file, 'utf8', function (err,data) {
-      if (err) {
-        return logger.warn(err);
-      }
-      var analyzer = new GiftParser(options.showTokenize)
-      analyzer.parse(data);
-      console.log(analyzer.parsedQuestions)
-   })
-  })
+        fs.readFile(args.file, 'utf8', function (err,data) {
+			if (err) {
+				return logger.warn(err);
+			}
+
+			var analyzer = new GiftParser(options.showTokenize);
+			analyzer.parse(data);
+
+			// console.log(analyzer.parsedQuestions);
+		});
+    })
 
 
 
@@ -205,15 +216,166 @@ program
       console.log('Voici votre questionnaire'.brightCyan);
       console.log('------------------------------'.cyan);
       console.log(questionnaire);
-    });
+    })
 
+  .command('searchFile', "permet de rechercher un ou des fichiers parmi la base de données, et d'afficher les questions de ces fichiers avec le type choisi")
+  .alias('sf')
+  .argument('[name...]', 'nom du ou des fichiers parmis lesquels on souhaite afficher des questions')
+  .option('-n, --word <word>', "permet d'afficher le ou les fichiers dont le nom contient 'word'")
+  .option('-c, --expression <expresssion>', "permet d'afficher le ou les fichiers dont le contenu contient 'expression'")
+  .action(async ({ args, options, logger }) => {
 
+    const answers = await inquirer.prompt([  //le programme demande à l'utilisateur le type de questions qu'il souhaite afficher
+      {
+        type: 'list',
+        message: 'Sélectionnez les types de questions à afficher:',
+        name: 'types',
+        choices: Object.values(QT)  //les types sont choisis parmis les types de questions définis dans QuestionType.js
+      }
+    ]);
 
+    const selectedTypes = answers.types;
+    console.log('\n')
 
-program.run(process.argv.slice(2));
+    if (args.name) {  //dans le cas ou on a rentré le nom ou les noms de fichiers, on va parser les questions de chaque fichiers, et afficher celle avec le type correpondant au choix de l'utilisateur
+      args.name.forEach(filename => {  //pour chaque fichier dont le nom a été entré par l'utilisateur
+        const filePath = path.join('data', filename);  //création du chemin
+        fs.readFile(filePath, 'utf-8', (err, content) => {  //lecture du fichier
+          if (err) {
+            return console.log('Impossible de scanner le fichier ' + filename + ': ' + err + '\n');  //gestion des erreurs
+          }
 
+          toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+            if (err) {
+              console.error(err);
+            } else {
+              const filteredQuestions = parsedQuestions.filter(question => {  //on filtre le tableau constituté des questions parsées, afin de ne garder que celles avec le bon type
+                const includesSelectedType = selectedTypes.includes(question.type);
+                return includesSelectedType;
+              });
 
+              console.log('\nQuestions dont le type correspond à votre choix dans '.red + filename.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
+            }
+          });
+        });
+      });
+    }
 
+    fs.readdir(directoryPath, function (err, files) {  //si le nom des fichiers n'a pas été fourni
+
+      if (err) {
+        return console.log('Impossible de scanner le dossier: ' + err);  //gestion des erreurs
+      }
+
+      files.forEach(function (file) {  //pour tous les fichiers du dossier, deux choix s'ouvrent
+
+        if (options.n && file.includes(options.n)) {  //si l'option -n a été ajoutée, et que le nom du fichier contient 'word'
+          console.log(`Fichiers dont le nom contient "${options.n}": ${file}`.red);
+          const filePath = path.join('data', file);  //création du chemin
+          fs.readFile(filePath, 'utf-8', function (err, content) {  //lecture du fichier
+            if (err) {
+              return console.log('Impossible de scanner le fichier ' + file + ': ' + err + '\n');  //gestion des erreurs
+            }
+            toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+              if (err) {
+                console.error(err);
+              } else {
+                const filteredQuestions = parsedQuestions.filter(question => {  //on filtre le tableau constituté des questions parsées, afin de ne garder que celles avec le bon type
+                  const includesSelectedType = selectedTypes.includes(question.type);
+                  return includesSelectedType;
+                });
+
+                console.log('\nQuestions dont le type correspond à votre choix dans '.red + file.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
+              }
+            });
+          })
+        }
+
+        if (options.c) {  //si l'option -c a été ajoutée, on va alors ouvrir chaque fichier et vérifier si le contenu contient 'expression'
+          const filePath = path.join('data', file);  //création du chemin
+          fs.readFile(filePath, 'utf-8', function (err, content) {  //lecture du fichier
+            if (err) {
+              return console.log('Impossible de scanner le fichier ' + file + ': ' + err + '\n');  //gestion des erreurs
+            }
+
+            if (content.includes(options.c)) {  //on vérifie que le contenue contient 'expression'
+              console.log(`Le fichier ${file} contient l'expression "${options.c}".`.red);
+
+              toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+                if (err) {
+                  console.error(err);
+                } else {
+                  const filteredQuestions = parsedQuestions.filter(question => {  //on filtre le tableau constituté des questions parsées, afin de ne garder que celles avec le bon type
+                    const includesSelectedType = selectedTypes.includes(question.type);
+                    return includesSelectedType;
+                  });
+
+                  console.log('\nQuestions dont le type correspond à votre choix dans '.red + file.red + ':', filteredQuestions);  //affichage des questions avec le type correspondant
+
+                }
+              });
+            }
+          });
+        }
+      })
+    })
+
+  })
+
+  .command('displayFile', "permet d'afficher toutes les questions d'ou ou de plusieurs fichiers, sans trier par type de question")
+  .alias('df')
+  .argument('[file...]', "nom du ou des fichiers que l'on veut afficher")
+  .option('-a', 'affiche tous les fichiers')
+  .action(({ args, options, logger }) => {
+    if (options.a) {  //si l'option -a a été ajoutée, on va tout simplement scanner tout le dossier et afficher chaque question de chaque fichier
+      fs.readdir(directoryPath, function (err, files) {  //lecture de tout le dossier
+        console.log(files)
+        if (err) {
+          return console.log('Impossible de scanner le dossier: ' + err); //gestion des erreurs
+        }
+        files.forEach(function (file) {
+          const filePath = path.join('data', file);  //création du chemin
+          fs.readFile(filePath, 'utf-8', function (err, content) {  //lecture du fichier
+            if (err) {
+              return console.log('Impossible de scanner le fichier ' + file + ': ' + err + '\n');  //gestion des erreurs
+            }
+            toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+              if (err) {
+                console.error(err);  //gestion des erreurs
+              } else {
+                console.log(`\n${file}`.red, parsedQuestions, '\n')  //affichage des questions du fichier une fois parsées
+              }
+            });
+          });
+        });
+      });
+    } else if (args.file) {  //si des noms de fichiers ont été entrés
+      args.file.forEach(filename => {  //pour chaque fichier dont le nom a été entré par l'utilisateur
+        const filePath = path.join('data', filename);  //création du chemin
+        fs.readFile(filePath, 'utf-8', (err, content) => {  //lecture du fichier
+          if (err) {
+            return console.log('Impossible de scanner le fichier ' + filename + ': ' + err + '\n');  //gestion des erreurs
+          }
+
+          toQuestion(filePath, (err, parsedQuestions) => {  //parsing en objets de type question
+            if (err) {
+              console.error(err);  //gestion des erreurs
+            } else {
+              console.log(parsedQuestions)  //affichage des questions du fichier une fois parsées
+            }
+          });
+        });
+      });
+    }
+  })
+
+  .command('createVCard', "permet de créer une VCard avec les paramètres rentrés par l'utilisateur")
+    .alias('cvc')
+    .action(() => {
+        Create.askQuestions();
+  })
+
+    
 /*
 Description : selectQuestion sert à permettre à l'utilisateur de sélectionner
 une question dans la base de données.
@@ -225,11 +387,13 @@ questions grâce au parseur, les propose à l'utilisateur pour sélection.
 Sortie : retourne la question choisie par l'utilisateur sous la forme
 d'un objet
 */
+    
+
 async function selectQuestion() {
   // Gestion des erreurs en mettant toute la fonction dans un 'try'
   try {
     // Lecture des noms de tous les fichiers de la base de données
-    let listeFichiers = await fs.readdir(directoryPath);
+    let listeFichiers = await fsp.readdir(directoryPath);
     // Affichage de tous les noms de fichiers
     // On demande à l'utilisateur lequel ouvrir pour avoir accès aux questions
     let fichierChoisi = await choixFichier(listeFichiers);
@@ -242,7 +406,7 @@ async function selectQuestion() {
       // Sinon, on ouvre le fichier sélectionné
       // et on laisse le choix à l'utilisateur de la question à selectionner.
       let filePath = path.join(directoryPath, fichierChoisi.toString());
-      let contenuDuFichier = await fs.readFile(filePath, 'utf-8');
+      let contenuDuFichier = await fsp.readFile(filePath, 'utf-8');
       let questionsDuFichier = await giftToQuestion(contenuDuFichier);
 
       // On récupère la question choisie dans la liste des questions du dossier
@@ -365,3 +529,27 @@ async function giftToQuestion(data) {
   return analyzer.parsedQuestions;
 }
 
+/*
+Description : Fonction de parsing des questions d'un fichier
+Entrée : file (string) => nom du fichier à parser
+Entrée : callback (function) => appel d'une autre fonction pour traiter les données
+Fonctionnement : lecture du fichier, création d'un nouvel objet GiftParser, et mise en branle du parsing dans GiftParser.js
+Sortie : AUCUNE
+*/
+
+function toQuestion(file, callback) {
+  fs.readFile(file, 'utf8', (err, data) => {
+    if (err) {
+      return callback(err, null);
+    }
+
+    const analyzer = new GiftParser();
+      analyzer.parse(data);
+
+        callback(null, analyzer.parsedQuestions);
+    });
+}
+
+
+
+program.run(process.argv.slice(2));
