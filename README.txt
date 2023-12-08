@@ -82,7 +82,7 @@ Et les autres à 0
 
 
 ### Liste des contributeurs
-Aurélien  (aurelien.julie@utt.fr)
+Aurélien  (aurelien.juille@utt.fr)
 Tibault   (tibault.bisagni@utt.fr)
 Marian    (marian.vigneron@utt.fr)
 Ambrine   (ambrine.bencheikh@utt.fr)
