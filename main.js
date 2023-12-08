@@ -10,7 +10,7 @@ const TestQuestionnaire = require('./TestQuestionnaire.js')
 const fs = require('fs');
 const fsp = fs.promises;
 
-
+const objectsToGIFT = require("./objectsToGIFT.js")
 // inquirer permet de faire une 'interface' de choix.
 const inquirer = require('inquirer');
 
@@ -222,6 +222,7 @@ program
       console.log('Voici votre questionnaire'.brightCyan);
       console.log('------------------------------'.cyan);
       console.log(questionnaire);
+      objectsToGIFT(questionnaire)
     })
 
   .command('searchFile', "permet de rechercher un ou des fichiers parmi la base de données, et d'afficher les questions de ces fichiers avec le type choisi")
