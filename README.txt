@@ -15,25 +15,17 @@ $ npm install
 
 $ node . <command>
 
-<command> : choixQuestion
+<command> : choixQuestion (alias cq)
 
 Permet à l'utilisateur de faire une sélection de questions à mettre dans un questionnaire.
-
-<command> : check                                                     (exemple du TD)
-
--h or --help 	:	 display the program help                             (exemple du TD)
--t or --showTokenize :	 display the tokenization result              (exemple du TD)
--s or --showSymbols :	 display each step of the analysis              (exemple du TD)
-
-Optional parameters have to be before the mandatory file parameter.   (exemple du TD)
 
 
 <command> : searchFile (alias sf)
 
-Permet à l'utilisateur de chercher des questions d'un certain type dans un ou des fichiers en fonction des critères suivants : 
+Permet à l'utilisateur de chercher des questions d'un certain type dans un ou des fichiers en fonction des critères suivants :
 
-    - le nom complet du ou des fichiers : 
-        - argument [name...] -> entrer le nom du ou des fichiers, séparés par un espace 
+    - le nom complet du ou des fichiers :
+        - argument [name...] -> entrer le nom du ou des fichiers, séparés par un espace
 
     - une partie du nom du ou des fichiers :
         - option -n -> entrer une partie du nom du ou des fichiers, entre ''
@@ -41,15 +33,15 @@ Permet à l'utilisateur de chercher des questions d'un certain type dans un ou d
     - une partie du contenu du ou des fichiers :
         - option -c -> entrer une partie du contenu du ou des fichiers, entre ''
 
-Une fois dans le ou les fichiers choisis, l'utilisateur devra choisir un type de question qu'il voudra afficher. Il suffit de faire défiler avec les flèches directionnelles, 
+Une fois dans le ou les fichiers choisis, l'utilisateur devra choisir un type de question qu'il voudra afficher. Il suffit de faire défiler avec les flèches directionnelles,
 et d'appuyer sur entrer une fois sur le type choisi.
 
 
 <command> : displayFile (alias df)
 
-Permet à l'utilisateur d'afficher un ou des fichiers selon son choix : 
+Permet à l'utilisateur d'afficher un ou des fichiers selon son choix :
 
-    - le nom complet du ou des fichiers : 
+    - le nom complet du ou des fichiers :
         - argument [file...] -> entrer le nom du ou des fichiers, séparés par un espace
 
     - option -a -> affiche l'entiereté des fichiers
@@ -60,13 +52,12 @@ Permet à l'utilisateur d'afficher un ou des fichiers selon son choix :
 Permet à l'utilisateur de créer une carte d'identification VCard, en entrant les informations de la personne dont il crée le contact.
 
 
-
 <command> : histogramme (alias hg)
 
 Aucun paramètre d'entrée
 
-Permet à l'utilisateur d'ouvrir une page HTML dans laquel il pourra sélectionner son questionaire (boutton: "choisir un fichier") au format .gift afin de visualiser à travers un histogramme le type des différentes questions qui l'a compose. 
-Il pourra égallement afficher l'histogramme de un ou plusieurs questionaires de la base de donnée. (boutton: "Select. fichiers") 
+Permet à l'utilisateur d'ouvrir une page HTML dans laquel il pourra sélectionner son questionaire (boutton: "choisir un fichier") au format .gift afin de visualiser à travers un histogramme le type des différentes questions qui l'a compose.
+Il pourra égallement afficher l'histogramme de un ou plusieurs questionaires de la base de donnée. (boutton: "Select. fichiers")
 Il pourra enfin comparer son questionaire avec les fichiers selectionnées de la base en appuyant sur le boutton "comparer". Attention, il faut forcément avoir selectionné au moins un fichier dans chaque groupe pour pouvoir comparer.
 La comparaison affiche sur la page HTML un histogramme avec la somme des deux précédents histogrammes ( Bleu : votre queestionaire, orange: les questions selectionnées de la base de données)
 Il renvoit égallement le nombre de questions dans chaque ensemble sans prendre en compte les exemples.

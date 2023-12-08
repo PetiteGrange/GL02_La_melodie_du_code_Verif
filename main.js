@@ -104,6 +104,7 @@ program
   */
 
     .command('créerQuestionnaire', 'Permet de sélectionner des questions à mettre dans un questionnaire.')
+    .alias('cq')
     .action(async function () {
       // Déclaration des variables qui seront utilisées dans la boucle.
       questionnaireFini = false;
@@ -377,7 +378,7 @@ program
 			if (err) {
 				return logger.warn(err);
 			}
-			
+
 			var analyzer = new GiftParser();
 			analyzer.parse(data);
 
