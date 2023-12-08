@@ -82,7 +82,7 @@ class GiftParser {
         const stringWithoutTitle = input.replace(titleRegex, '').trim();
 
         return stringWithoutTitle.replace(bracketRegex, match => {
-            if (![QT.ASSO, QT.VF, QT.TEXT].includes(ty)) {
+            if (![QT.ASSO, QT.VF, QT.TEXT].includes(ty) && occurrence == 0) {
                 occurrence++;
                 return `-> answer <-`;
             } else {

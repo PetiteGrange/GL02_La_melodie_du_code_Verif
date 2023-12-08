@@ -26,6 +26,7 @@ class TestQuestionnaire {
     parsedToPrompt(pQs) {
         var prompts = []
         pQs.forEach((element, idx) => {
+            console.log(element.type)
             var qtype = ''
             var choices = this.choicesFromAnswer(element.answer, element.type)
             switch (element.type) {
