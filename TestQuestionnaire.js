@@ -12,12 +12,15 @@ class TestQuestionnaire {
 
     async start() {
         const test = await inquirer.prompt(this.questions);
-        console.log("PARSED : ", this.parsedQuestions)
-        console.log("TEST : ", test)
+        var qNumber = 0
         this.parsedQuestions.forEach((q, idx) => {
-            this.totalPoints += q.check(test[idx.toString()])
+            var bonus = q.check(test[idx.toString()])
+            if (typeof(bonus) == typeof(1.0)) {
+                this.totalPoints += bonus
+                qNumber ++
+            }
         });
-        console.log("VOTRE SCORE FINAL : ", this.totalPoints, "/", this.parsedQuestions.length)
+        console.log("VOTRE SCORE FINAL : ", this.totalPoints, "/", qNumber)
     }
 
     parsedToPrompt(pQs) {

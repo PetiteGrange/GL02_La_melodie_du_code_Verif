@@ -15,11 +15,10 @@ class Question {
                 return this.answer == testAns ? 1 : 0
 
             case QuestionType.QCU:
-                console.log("ANS : ", this.answer)
-                console.log("TEST : ", testAns)
                 for (let i = 0; i < this.answer.length; i++) {
                     const ans = this.answer[i];
                     if (testAns == ans["text"]) {
+                        console.log(ans["feedback"])
                         return ans["value"];
                     }
                 }
@@ -32,6 +31,7 @@ class Question {
                     for (let j = 0; j < this.answer.length; j++) {
                         const ans = this.answer[j];
                         if (ans["text"] == testA) {
+                            console.log(ans["feedback"])
                             score += ans["value"];
                         }
                     }
@@ -53,6 +53,7 @@ class Question {
                     const min = ans["target"] - ans["range"];
                     const max = ans["target"] + ans["range"];
                     if (testAns >= min && testAns <= max) {
+                        console.log(ans["feedback"])
                         return ans["value"];
                     }
                 }
@@ -62,18 +63,21 @@ class Question {
                 for (let i = 0; i < this.answer.length; i++) {
                     const ans = this.answer[i];
                     if (testAns >= ans["min"] && testAns <= ans["max"]) {
+                        console.log(ans["feedback"])
                         return ans["value"];
                     }
                 }
                 return .0;
 
             case QuestionType.TEXT:
-                return "Needs verification";
+                console.log("Essay question needs verification")
+                return 0;
 
             case QuestionType.TAT:
                 for (let i = 0; i < this.answer.length; i++) {
                     const element = this.answer[i];
                     if (element["text"] === testAns) {
+                        console.log(element["feedback"])
                         return element["value"];
                     }
                 }
