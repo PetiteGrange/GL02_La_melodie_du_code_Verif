@@ -1,10 +1,21 @@
 const QT = require('./QuestionType')
+const inquirer = require('inquirer');
+const fs = require('fs');
 
-function objectsToGIFT(objects) {
+async function objectsToGIFT(objects) {
+    const answers = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'fileName',
+            message: 'Entrez le nom du fichier où enregistrer votre questionnaire:'
+        }
+    ]);
+    const fileName = answers.fileName
+
     fileString = ""
     objects.forEach(question => {
-        fileString += `::${question.title}::\n}`
-        fileString += `${question.text}\n}`
+        fileString += `::${question.title}::\n`
+        fileString += `${question.text}\n`
         fileString += "{"
         switch (question.type) {
             case QT.VF:
@@ -14,8 +25,11 @@ function objectsToGIFT(objects) {
                     fileString += "F"
                 }
                 break
-            case QT.QCU, QT.QCM:
+            case QT.QCU:
+            case QT.QCM:
+                console.log("test")
                 question.answer.forEach(element => {
+                    console.log(element)
                     if (element.value == 1) {
                         fileString += "="
                     } else {
@@ -69,7 +83,14 @@ function objectsToGIFT(objects) {
         }
         fileString += "}\n"
     });
-    console.log(fileString)
+    
+    fs.writeFile(`./data/${fileName}.gift`, fileString, err => {
+        if (err) {
+            console.error(err)
+            return
+        }
+        console.log(`File ${fileName}.gift has been saved.`)
+    })
 }
 
 module.exports = objectsToGIFT;

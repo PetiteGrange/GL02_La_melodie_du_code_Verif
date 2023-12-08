@@ -49,29 +49,6 @@ const Create = require('./vcardGenerator');
 const histogrammeFunction = require('./histoQuestionaire.js');
 
 
-/*
-Lien vers le tuto caporal => https://caporal.io/guide/
-Lien vers doc format GIFT => https://docs.moodle.org/403/en/GIFT_format
-
-Rappel des SPECS :
-SPECF1 (Marian) : L'enseignant recherche et visualise une question à partir de la banque !! DONE !!
-SPECF2 (Ambrine) : L'enseignant sélectionne plusieurs questions en respectant les règles données (SPECF4)
-SPECF3 (Aurélien) : L'enseignant créé un fichier d'examen GIFT à partir des questions sélecionnées (SPECF2)
-SPECF4 (Ambrine) : Vérifier qu'un ensemble de questions respecte la qualité des données soit, l'ensemble comporte entre 15 et 20 questions toutes uniques
-SPECF5 (Marian) : Créer le fichier d'identification et de contact VCARD d'un enseignant aux normes RDC 6350 et 6868  !! DONE !!
-SPECF6 (Aurélien) : Simulation d'un examen sélectionné en entrant manuellement les réponses et en fournissant une fiche de résultats
-SPECF7 (Thibault) : Etablir le profil d'un examen montrant un histogramme des différents types de questions
-SPECF8 (Thibault) : Comparer le profil d'un examen (SPECF7) avec le profil d'un ou plusieurs autres examens.
-*/
-
-
-/*
-FORMAT PROPOSÉ POUR COMMENTER VOS BLOCS
-Description : ma fonction sert à ajouter "ONE PIECE" à une string
-Entrée : prend en entrée une string
-Fonctionnement : prend la string d'entrée et ajoute "ONE PIECE"
-Sortie : retourne la string d'entrée + "ONE PIECE"
-*/
 
 program
     .command('hello', 'says hello')
@@ -222,7 +199,7 @@ program
       console.log('Voici votre questionnaire'.brightCyan);
       console.log('------------------------------'.cyan);
       console.log(questionnaire);
-      objectsToGIFT(questionnaire)
+      await objectsToGIFT(questionnaire)
     })
 
   .command('searchFile', "permet de rechercher un ou des fichiers parmi la base de données, et d'afficher les questions de ces fichiers avec le type choisi")
