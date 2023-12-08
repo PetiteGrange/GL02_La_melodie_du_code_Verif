@@ -16,10 +16,11 @@ const QuestionType = {
     TEXT: 'QUESTION_TEXT',
     // ::Q7:: How are you? {}
     TAT: 'QUESTION_TEXT_A_TROUS',
-    // ::Q8:: Would you like {~=some~a few} rice with your chicken?
-    EXAMPLE: 'EXAMPLE',
-    MM: 'MOT MANQUANT',
     // ::Q8:: Two plus two equals {=four =4}
+    MM: 'MOT MANQUANT',
+    // ::Q9:: Would you like {~=some~a few} rice with your chicken?
+    EXAMPLE: 'EXAMPLE'
+    
 }
 
 module.exports = QuestionType;
