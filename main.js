@@ -40,6 +40,9 @@ let questionnaireFini;
 const QT = require('./QuestionType.js')  
 
 const Question = require('./Question.js');  
+ 
+//on a besoin de ce fichier pour créer les VCards
+const Create = require('./vcardGenerator');
 
 
 /*
@@ -364,11 +367,15 @@ program
         });
       });
     }
-  });
+  })
+
+  .command('createVCard', "permet de créer une VCard avec les paramètres rentrés par l'utilisateur")
+    .alias('cvc')
+    .action(() => {
+        Create.askQuestions();
+  })
 
     
-
-
 /*
 Description : selectQuestion sert à permettre à l'utilisateur de sélectionner
 une question dans la base de données.
