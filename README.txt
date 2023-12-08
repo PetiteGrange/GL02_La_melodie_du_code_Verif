@@ -60,6 +60,27 @@ Permet à l'utilisateur d'afficher un ou des fichiers selon son choix :
 Permet à l'utilisateur de créer une carte d'identification VCard, en entrant les informations de la personne dont il crée le contact.
 
 
+
+<command> : histogramme (alias hg)
+
+Aucun paramètre d'entrée
+
+Permet à l'utilisateur d'ouvrir une page HTML dans laquel il pourra sélectionner son questionaire (boutton: "choisir un fichier") au format .gift afin de visualiser à travers un histogramme le type des différentes questions qui l'a compose. 
+Il pourra égallement afficher l'histogramme de un ou plusieurs questionaires de la base de donnée. (boutton: "Select. fichiers") 
+Il pourra enfin comparer son questionaire avec les fichiers selectionnées de la base en appuyant sur le boutton "comparer". Attention, il faut forcément avoir selectionné au moins un fichier dans chaque groupe pour pouvoir comparer.
+La comparaison affiche sur la page HTML un histogramme avec la somme des deux précédents histogrammes ( Bleu : votre queestionaire, orange: les questions selectionnées de la base de données)
+Il renvoit égallement le nombre de questions dans chaque ensemble sans prendre en compte les exemples.
+Il affiche ensuite la valeur relative de question de votre questionaire par rapport à la base de questionaires selectionnée.
+
+Par exemple si votre questionaire à 5 QCM et 1 question Association et l'ensemble des questions séléctionées a 20 texte à trous et 2 QCM il affichera:
+
+QCM  : + 3 (car votre questionaire à 3 questions de ce type en + par rapport à la banque de questionnaires choisies)
+question Association : +1
+texte à trous : -20 (car votre questionaire à 20 questions de ce type en - par rapport à la banque de questionnaires choisies)
+Et les autres à 0
+
+
+
 ### Liste des contributeurs
 Aurélien  (aurelien.julie@utt.fr)
 Tibault   (tibault.bisagni@utt.fr)
