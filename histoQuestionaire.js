@@ -48,3 +48,6 @@ const openIndexHtml = async () => {
         exec(`xdg-open ${indexPath}`);
     }
   };
+
+
+  module.exports = openIndexHtml;

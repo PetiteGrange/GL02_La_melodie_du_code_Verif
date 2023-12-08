@@ -44,6 +44,8 @@ const Question = require('./Question.js');
 //on a besoin de ce fichier pour créer les VCards
 const Create = require('./vcardGenerator');
 
+const histogrammeFunction = require('./histoQuestionaire.js');
+
 
 /*
 Lien vers le tuto caporal => https://caporal.io/guide/
@@ -374,6 +376,16 @@ program
     .action(() => {
         Create.askQuestions();
   })
+
+  //créait la commande "histogramme" disponible en invite de commande afin d'afficher une page HTML
+  .command('histogramme', "Affiche l'Histogramme d'un questionnaire")
+    .alias("hg")
+    .action(({args, options, logger}) => {
+        
+      
+      histogrammeFunction();
+
+    });
 
     
 /*
