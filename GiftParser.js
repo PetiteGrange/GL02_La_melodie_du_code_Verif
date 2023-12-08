@@ -188,11 +188,11 @@ class GiftParser {
     static keyCaracters = ["=", "~"]
     findAnswer(input, type, pa) {
         // Lit le contenu entre crochets envoyé dans "txt", et retourne les différentes réponses (vraies et fausses) envisagées ainsi que leur feedback s'il existe
-        function read(txt, accumulator = "", currentElement = "=", elementsAccumulator = [], currentField = "main", feedback = "", partialCredit = "") {
+        function read(txt, accumulator = "", currentElement = "", elementsAccumulator = [], currentField = "main", feedback = "", partialCredit = "") {
             if (txt.length === 0) {
                 var finalElement = {}
-                finalElement[currentElement] = accumulator.trim()
-                finalElement["feedback"] = feedback.trim()
+                finalElement[currentElement] = accumulator
+                finalElement["feedback"] = feedback
                 if (pa) {
                     if (partialCredit === "") {
                         finalElement["partialCredit"] = 1.0
@@ -201,33 +201,44 @@ class GiftParser {
                     }
                 }
                 elementsAccumulator.push(finalElement)
+                console.log(elementsAccumulator)
                 return elementsAccumulator
             }
 
             var curCar = txt[0]
 
             if (GiftParser.keyCaracters.includes(curCar)) {
-                if (accumulator != "") {
+                if (accumulator.trim() != "") {
                     var element = {}
-                    element[currentElement] = accumulator.trim()
-                    element["feedback"] = feedback.trim()
+                    element[currentElement] = accumulator
+                    element["feedback"] = feedback
                     elementsAccumulator.push(element)
                     accumulator = ""
                     feedback = ""
-                    isFeedback = false
+                    currentField = "main"
                 }
                 currentElement = curCar
             } else {
-                if (curCar == "#") {isFeedback = true}
-    
-                if (!isFeedback) {
-                    accumulator += curCar
+                if (curCar === "#") {
+                    currentField = "feedback"
+                } else if (curCar === "%") {
+                    if (currentField === "main") {
+                        currentField = "partialCredit"
+                    } else {
+                        currentField = "main"
+                    }
                 } else {
-                    feedback += curCar
+                    if (currentField === "main") {
+                        accumulator += curCar
+                    } else if (currentField === "feedback") {
+                        feedback += curCar
+                    } else if (pa && currentField === "partialCredit") {
+                        partialCredit += curCar
+                    }
                 }
             }
 
-            return read(txt.substring(1), accumulator, currentElement, elementsAccumulator, isFeedback, feedback)
+            return read(txt.substring(1), accumulator, currentElement, elementsAccumulator, currentField, feedback, partialCredit)
         }
 
         switch (type) {
