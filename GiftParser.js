@@ -44,10 +44,8 @@ class GiftParser {
     }
 
     question(input) {
-        console.log("INPUT : ", input)
         var args = this.body(input)
         var q = new Q(...Object.values(args))
-        console.log(q)
         this.parsedQuestions.push(q)
     }
 
@@ -59,7 +57,7 @@ class GiftParser {
     body(input) {
         var ti = this.title(input)
         var pa = this.partialCredit(input)
-        var ty = this.type(input, pa)
+        var ty = this.findType(this.extractAnswers(input), pa)
         var te = this.text(input, ty)
         var an = this.answer(input, ty, pa)
         return { "title": ti, "text": te, "type": ty, "answer": an, "partialCredit": pa }
@@ -100,21 +98,17 @@ class GiftParser {
         let match
         
         while ((match = regex.exec(input)) !== null) {
-            
-            matches.push(match[1])
+            return match[1]
         }
 
         //Si les accolades sont vides
         if (regex2.test(input)) {
-            return [QT.TEXT]
+            return QT.TEXT
         }
         
         // EXAMPLE
-        else if (matches.length == 0) {
-            return [QT.EXAMPLE]
-        }
-
-        return matches
+        return QT.EXAMPLE
+        
     }
 
     findType(input, pa) {
@@ -124,7 +118,7 @@ class GiftParser {
             return QT.EXAMPLE
         } else if (input.includes("->")) {
             return QT.ASSO
-        } else if (input.includes("TRUE") || input.includes("FALSE") || input.includes("T") || input.includes("F")) {
+        } else if (input.length === 1 || /(?:\bTRUE\b|\bFALSE\b)/i.test(input)) {
             return QT.VF
         } else if (input[0] === "#") {
             const hasDoubleDot = /\.\./.test(input);
@@ -142,34 +136,12 @@ class GiftParser {
         return QT.QCU
     }
 
-    type(input, pa) {
-        var matches = this.extractAnswers(input)
-        var types = []
-
-        matches.forEach(element => {
-            types.push(this.findType(element, pa))
-        })
-
-        return types
-    }
-
     answer(input, type, pa) {
         var matches = this.extractAnswers(input)
-        var answers = []
 
-        matches.forEach((element, idx) => {
-            if (element[0] == "#") {
-                matches[idx] = element.substring(1)
-            }
-        })
-
-        matches.forEach(element => {
-            var a = this.findAnswer(element, type, pa)
-            console.log(type[0], " : ", a)
-            answers.push(a)
-        })
-
-        return answers
+        if (matches[0] === "#") {matches = matches.substring(1)}
+        var ans = this.findAnswer(matches, type, pa)
+        return ans
     }
 
     static keyCaracters = ["=", "~"]
@@ -178,14 +150,16 @@ class GiftParser {
         function read(txt, accumulator = "", currentElement = "", elementsAccumulator = [], currentField = "main", feedback = "", partialCredit = "") {
             if (txt.length === 0) {
                 var finalElement = {}
-                finalElement[currentElement] = accumulator
-                finalElement["feedback"] = feedback
+                finalElement["text"] = accumulator.trim()
+                finalElement["feedback"] = feedback.trim()
                 if (pa) {
                     if (partialCredit === "") {
-                        finalElement["partialCredit"] = 1.0
+                        finalElement["value"] = 1.0
                     } else {
-                        finalElement["partialCredit"] = parseFloat(partialCredit) / 100
+                        finalElement["value"] = parseFloat(partialCredit) / 100
                     }
+                } else {
+                    finalElement["value"] = currentElement === "=" ? 1 : 0
                 }
                 elementsAccumulator.push(finalElement)
                 return elementsAccumulator
@@ -196,8 +170,17 @@ class GiftParser {
             if (GiftParser.keyCaracters.includes(curCar)) {
                 if (accumulator.trim() != "") {
                     var element = {}
-                    element[currentElement] = accumulator
-                    element["feedback"] = feedback
+                    element["text"] = accumulator.trim()
+                    element["feedback"] = feedback.trim()
+                    if (pa) {
+                        if (partialCredit === "") {
+                            element["value"] = 1.0
+                        } else {
+                            element["value"] = parseFloat(partialCredit) / 100
+                        }
+                    } else {
+                        element["value"] = currentElement === "=" ? 1 : 0
+                    }
                     elementsAccumulator.push(element)
                     accumulator = ""
                     feedback = ""
@@ -229,11 +212,11 @@ class GiftParser {
 
         var read_result = read(input)
 
-        switch (type[0]) {
+        switch (type) {
             // testAns = Boolean
             // this.answer = Boolean
             case QT.VF:
-                return input.includes("T")
+                return !(input.includes("F") || /\bFALSE\b/i.test(input))
 
             // testAns = String
             // this.answer = ""
@@ -256,17 +239,11 @@ class GiftParser {
                 var result = []
                 read_result.forEach(element => {
                     var split = ""
-                    var key = ""
+                    var key = "text"
                     var value = 1
-                    if ("=" in element) {
-                        key = "="
-                    } else {
-                        key = "~"
-                        value = 0
-                    }
 
-                    if ("partialCredit" in element) {
-                        value = element["partialCredit"]
+                    if ("value" in element) {
+                        value = element["value"]
                     }
 
                     var split = element[key].split(":").map(str => str.trim())
@@ -285,17 +262,11 @@ class GiftParser {
                 var result = []
                 read_result.forEach(element => {
                     var split = ""
-                    var key = ""
+                    var key = "text"
                     var value = 1
-                    if ("=" in element) {
-                        key = "="
-                    } else {
-                        key = "~"
-                        value = 0
-                    }
 
-                    if ("partialCredit" in element) {
-                        value = element["partialCredit"]
+                    if ("value" in element) {
+                        value = element["value"]
                     }
 
                     var split = element[key].split("..").map(str => str.trim())
@@ -313,32 +284,6 @@ class GiftParser {
             
             default:
                 return read_result
-
-            // // testAns = String
-            // // this.answer = [{"text": String, "value": float, "feedback": String}]
-            // case QT.QCU:
-
-            // // testAns = [String]
-            // // this.answer = [{"text": String, "value": float, "feedback": String}]
-            // case QT.QCM:
-
-            // // testAns = {"Question1": "Réponse1", "Question2": "Réponse2"}
-            // // this.answer = {"Question1": "Réponse1", "Question2": "Réponse2"}
-            // case QT.ASSO:
-
-            // // testAns = float
-            // // this.answer = [{"target": float, "range": float", "value": float, "feedback": String}]
-            // case QT.NUM_E:
-
-            // // testAns = float
-            // // this.answer = [{"min": float, "max": float, "value": float, "feedback": String}]
-            // case QT.NUM_R:
-
-            // // testAns = [String]
-            // // this.answer = [{"text": String, "value": float}]
-            // case QT.TAT:
-
-
         }
     }
 
