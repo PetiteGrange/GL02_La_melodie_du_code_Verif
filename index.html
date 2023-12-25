@@ -25,9 +25,8 @@
     <h3>Votre questionaire</h3>
     <!-- bouton pour importer UN questionaire .GIFT -->
     <form id="fileForm">
-        <label for="fileInput">Sélectionnez un fichier :</label>
-        <input type="file" id="fileInput"  onchange="loadFile()" />
-        
+      <label for="fileInput">Sélectionnez un fichier :</label>
+      <input type="file" id="fileInput" onchange="loadFile()" accept=".gift" />
       </form>
 
       <!-- Container pour la visualisation du questionaire choisi -->
@@ -36,12 +35,10 @@
 
       <h3>Dossier(s) pour la comparaison</h3>
       <!-- bouton pour importer plusieurs questionaires en .GIFT -->
-      <form id="fileForm">
-        <label for="fileInput2">Sélectionnez un ou plusieurs fichier :</label>
-        <input type="file" id="fileInput2"  onchange="traiterFichiers()" multiple/>
-        
-
-      </form>
+    <form id="fileForm2">
+      <label for="fileInput2">Sélectionnez un ou plusieurs fichiers :</label>
+      <input type="file" id="fileInput2" onchange="traiterFichiers()" accept=".gift" multiple />
+    </form>
      <!-- Container pour la visualisation des différents questionaires choisis --> 
     <div id="vis2"></div>
 
@@ -54,7 +51,7 @@
     <br><br>
     <!-- Container pour afficher le résultat de la comparaison -->
     <div id="result"></div>
-    
+
 
     <script>
       //Declaration des variables afin de pouvoir les réutiliser dans la comparaison
