@@ -26,24 +26,44 @@ npm install
 #### Choix de Questions.
 
 ```bash
-$ node . cq
+node . cq
 ```
 Permet à l'utilisateur de faire une sélection de questions à mettre dans un questionnaire.
 
 #### Test du Questionnaire.
 
 ```bash
-$ node . test <chemin_vers_fichier_questionnaire>
+node . test <chemin_vers_fichier_questionnaire>
 ```
 Permet de tester le questionnaire contenu dans le fichier donné en argument.
 
 #### Recherche de Questions dans les Fichiers.
 
 ```bash
-$ node . sf <chemin_vers_fichier_questionnaire>
+node . sf <chemin_vers_fichier_questionnaire>
 ```
 Permet à l'utilisateur de chercher des questions d'un certain type dans un ou des fichiers en fonction des critères spécifiés.
 
+#### Affichage de Fichiers.
+
+```bash
+node . df
+```
+Permet à l'utilisateur d'afficher un ou des fichiers selon son choix.
+
+#### Création de VCard.
+
+```bash
+node . cvc
+```
+Permet à l'utilisateur de créer une carte d'identification VCard en entrant les informations de la personne dont il crée le contact.
+
+#### Histogramme.
+
+```bash
+node . hg
+```
+Permet à l'utilisateur de visualiser un histogramme des types de questions dans un questionnaire au format GIFT. Il offre également la possibilité de comparer son questionnaire avec des fichiers sélectionnés de la base de données.
 
 
 
