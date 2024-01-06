@@ -5,4 +5,5 @@
 - [Timofey ABRAMOV](https://github.com/Tim843)
 - [Camille LARDE](https://github.com/Camillelrd)
 - [Alexis HEUSCHLING](https://github.com/PetiteGrange)
-
+## Licence
+Ce projet est sous licence MIT. Veuillez consulter le fichier [LICENSE](LICENSE) pour plus de détails.
