@@ -13,7 +13,6 @@ Ce projet est sous licence MIT. Veuillez consulter le fichier [LICENSE](LICENSE)
 Le projet GL02_A23 a pour objectif de faciliter la création de tests au format GIFT pour le ministère de l'éducation nationale de la République de Sealand.
 
 ## Installation
-
 [npm](https://www.npmjs.com/)
 
 ```bash
@@ -23,7 +22,7 @@ npm install
 ## Utilisation :
 ### Liste des commandes : 
 
-#### Choix de Questions.
+#### Choix de Question.
 
 ```bash
 node . cq
@@ -58,7 +57,7 @@ node . cvc
 ```
 Permet à l'utilisateur de créer une carte d'identification VCard en entrant les informations de la personne dont il crée le contact.
 
-#### Histogramme.
+#### Affichage de l'histogramme.
 
 ```bash
 node . hg
