@@ -15,8 +15,8 @@ Le projet GL02_A23 a pour objectif de faciliter la création de tests au format 
 
 ## Contact
 Pour toute question ou problème, veuillez contacter un membre de l'équipe de développement aux adresses e-mail suivantes :
-- Othmane BEKKAL :othmane.bekkal@utt.fr
-- [Timofey ABRAMOV](mailto:timofey.abramov@utt.fr)
-- [Camille LARDE](mailto:camille.larde@utt.fr)
-- [Alexis HEUSCHLING](mailto:alexis.heuschling@utt.fr)
+- Othmane BEKKAL : othmane.bekkal@utt.fr
+- Timofey ABRAMOV : timofey.abramov@utt.fr
+- Camille LARDE : camille.larde@utt.fr
+- Alexis HEUSCHLING : alexis.heuschling@utt.fr
  
