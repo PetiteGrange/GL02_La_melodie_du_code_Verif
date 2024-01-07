@@ -19,6 +19,12 @@ Le projet GL02_A23 a pour objectif de faciliter la création de tests au format 
 npm install
 ```
 
+Il peut aussi être necessaire d'installer [vegalite api](https://www.npmjs.com/package/vega-lite-api)
+
+```bash
+npm install vega-lite-api
+```
+
 ## Utilisation :
 ### Liste des commandes : 
 
