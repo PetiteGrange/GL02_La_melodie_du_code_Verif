@@ -46,6 +46,7 @@ const Question = require('./Question.js');
 //on a besoin de ce fichier pour créer les VCards
 const Create = require('./vcardGenerator');
 
+//corection du ticket defect
 const histogrammeFunction = require('./histoQuestionaire.js');
 
 
