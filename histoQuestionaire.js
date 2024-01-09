@@ -15,7 +15,8 @@ questions
 
     });
 
-questions.run(process.argv.slice(2));
+//correction erreur d'affichage
+//questions.run(process.argv.slice(2));
 
 
 //function qui permet d'aficher et faire le comparatif entre un ou plusieurs questionnaires dans une page HTML
