@@ -11,7 +11,10 @@ Sortie : Booleen
 
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    const regexCaracteresAutorises = /^[a-zA-Z0-9@._-]+$/;
+    if (emailRegex.test(email) && regexCaracteresAutorises.test(email)){
+    return emailRegex.test(email);}
+    else return false;
 }
 
 /*
@@ -22,7 +25,24 @@ Sortie : Booleen
 */
 
 function isValidPhoneNumber(phoneNumber) {
+    if (phoneNumber.length==10){
     return !isNaN(phoneNumber);
+    }
+    else return false;
+}
+
+/*
+Description : Fonction de vérification de la présence d'une réponse
+Entrée : nom (String) => nom à vérifier
+Fonctionnement : vérifie que le nom a au moins 1 lettre
+Sortie : Booleen
+*/
+
+function isValideNom(nom) {
+    if (nom.length>0){
+    return true;
+    }
+    else return false;
 }
 
 /*
@@ -100,8 +120,8 @@ Sortie : Aucune
 */
 
 function askQuestions() {
-    askQuestion('Prénom : ', (answer) => true, (firstName) => {
-        askQuestion('Nom : ', (answer) => true, (lastName) => {
+    askQuestion('Prénom : ', isValideNom, (firstName) => {
+        askQuestion('Nom : ', isValideNom, (lastName) => {
             askQuestion('Email : ', isValidEmail, (email) => {
                 askQuestion('Numéro de téléphone : ', isValidPhoneNumber, (phoneNumber) => {
                     askQuestion('Rôle : ', (answer) => true, (role) => {

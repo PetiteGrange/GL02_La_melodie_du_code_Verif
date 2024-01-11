@@ -7,7 +7,7 @@ async function objectsToGIFT(objects) {
         {
             type: 'input',
             name: 'fileName',
-            message: 'Entrez le nom du fichier où enregistrer votre questionnaire:'
+            message: 'Entrez le nom de votre questionnaire:'
         }
     ]);
     const fileName = answers.fileName
