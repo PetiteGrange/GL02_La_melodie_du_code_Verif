@@ -7,7 +7,11 @@ async function objectsToGIFT(objects) {
         {
             type: 'input',
             name: 'fileName',
-            message: 'Entrez le nom de votre questionnaire:'
+            message: 'Entrez le nom de votre questionnaire:',
+            validate: function(value) {
+                // Vérifier si au moins un caractère est saisi
+                return value.length > 0 ? true : 'Veuillez saisir au moins un caractère.';
+            }
         }
     ]);
     const fileName = answers.fileName
