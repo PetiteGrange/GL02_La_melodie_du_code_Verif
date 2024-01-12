@@ -26,47 +26,71 @@ npm install vega-lite-api
 ```
 
 ## Utilisation :
+
+```bash
+node . <commande> [options] [paramètres d'options] [paramètres]
+```
+
+L'éxécution des commandes se fait à l'aide de Node.
+
+
 ### Liste des commandes : 
 
 #### Choix de Question.
 
 ```bash
-node . cq
+créerQuestionnaire, cq
 ```
 Permet à l'utilisateur de faire une sélection de questions à mettre dans un questionnaire.
 
 #### Test du Questionnaire.
 
 ```bash
-node . test <chemin_vers_fichier_questionnaire>
+test <chemin_vers_fichier_questionnaire>
 ```
 Permet de tester le questionnaire contenu dans le fichier donné en argument.
 
 #### Recherche de Questions dans les Fichiers.
 
 ```bash
-node . sf <chemin_vers_fichier_questionnaire>
+searchFile, sf <chemin_vers_fichier_questionnaire>
 ```
 Permet à l'utilisateur de chercher des questions d'un certain type dans un ou des fichiers en fonction des critères spécifiés.
+L'argument est le nom du fichier complet.
+
+##### Options:
+
+```bash
+-n, --word <word>
+```
+
+Elle permet d'afficher le ou les fichiers dont le nom contient 'word'.
+
+```bash
+-c, --expression <expression>
+```
+
+Elle permet d'afficher le ou les fichiers dont le contenu contient 'expression'.
+
 
 #### Affichage de Fichiers.
 
 ```bash
-node . df
+displayFile, df <nom du fichier>
 ```
-Permet à l'utilisateur d'afficher un ou des fichiers selon son choix.
+Permet à l'utilisateur d'afficher un ou des fichiers selon son choix en rentrant son nom en paramètre.
 
 #### Création de VCard.
 
 ```bash
-node . cvc
+createVCard, cvc
 ```
 Permet à l'utilisateur de créer une carte d'identification VCard en entrant les informations de la personne dont il crée le contact.
 
 #### Affichage de l'histogramme.
 
 ```bash
-node . hg
+histogramme, hg
 ```
 Permet à l'utilisateur de visualiser un histogramme des types de questions dans un questionnaire au format GIFT. Il offre également la possibilité de comparer son questionnaire avec des fichiers sélectionnés de la base de données.
 
