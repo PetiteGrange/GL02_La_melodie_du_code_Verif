@@ -52,11 +52,7 @@ const histogrammeFunction = require('./histoQuestionaire.js');
 
 
 program
-    .command('hello', 'says hello')
-    .action(({logger}) => {
-        logger.info("Hello World!".green)
-    })
-
+    
     .command('check', 'check')
     .argument('<file>', 'The file to check')
     .option('-t, --showTokenize', 'log the tokenization results', { validator: program.BOOLEAN, default: false })
