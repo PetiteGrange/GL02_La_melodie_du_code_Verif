@@ -386,7 +386,8 @@ program
 			var q = new TestQuestionnaire(analyzer.parsedQuestions)
 			q.start()
 		})
-    });
+
+	});
 
 /*
 Description : selectQuestion sert à permettre à l'utilisateur de sélectionner
@@ -564,4 +565,7 @@ function toQuestion(file, callback) {
 
 
 
-program.run(process.argv.slice(2));
+program.run(process.argv.slice(2)).catch((error) => {
+console.error(`Une erreur s'est produite dans l'entrée de la commande: ${error.message}`);
+process.exit(1);
+});
